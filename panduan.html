@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Panduan Pemilih - Pilkades Kalentambo</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/panduan.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="nav-container">
+
+            <a href="index.html" class="brand">
+                <div class="brand-logo">K</div>
+
+                <div class="brand-text">
+                    <h3>PILKADES DIGITAL</h3>
+                    <span>DESA KALENTAMBO</span>
+                </div>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="index.html">Beranda</a>
+                <a href="panduan.html" class="active">Panduan Pemilih</a>
+                <a href="hasil.html">Hasil Pemilihan</a>
+            </nav>
+
+            <a href="voting.html" class="nav-button">
+                Simulasi Voting
+            </a>
+
+        </div>
+    </header>
+
+
+    <!-- PAGE HEADER -->
+    <section class="guide-header">
+
+        <div class="guide-header-content">
+
+            <span class="guide-label">
+                PANDUAN PEMILIH
+            </span>
+
+            <h1>
+                Tata Cara Pemungutan
+                <span>Suara Digital</span>
+            </h1>
+
+            <p>
+                Ikuti setiap tahapan berikut untuk memahami
+                proses pemungutan suara digital Pilkades
+                Desa Kalentambo.
+            </p>
+
+            <div class="guide-meta">
+                <span>8 Tahapan</span>
+                <span>•</span>
+                <span>Panduan Interaktif</span>
+                <span>•</span>
+                <span>Simulasi Digital</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MAIN GUIDE -->
+    <main class="guide-main">
+
+        <div class="guide-container">
+
+            <!-- PROGRESS -->
+            <div class="progress-wrapper">
+
+                <div class="progress-top">
+                    <span>PROGRES PANDUAN</span>
+
+                    <strong id="progressText">
+                        1 dari 8 langkah
+                    </strong>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="step-indicators" id="stepIndicators">
+                    <span class="step-dot active">1</span>
+                    <span class="step-dot">2</span>
+                    <span class="step-dot">3</span>
+                    <span class="step-dot">4</span>
+                    <span class="step-dot">5</span>
+                    <span class="step-dot">6</span>
+                    <span class="step-dot">7</span>
+                    <span class="step-dot">8</span>
+                </div>
+
+            </div>
+
+
+            <!-- GUIDE CARD -->
+            <section class="guide-card">
+
+                <div class="guide-illustration">
+
+                    <div class="illustration-circle">
+                        <span id="stepIcon">📄</span>
+                    </div>
+
+                    <div class="illustration-caption">
+                        PILKADES DIGITAL KALENTAMBO
+                    </div>
+
+                </div>
+
+
+                <div class="guide-content">
+
+                    <div class="step-number" id="stepNumber">
+                        LANGKAH 01
+                    </div>
+
+                    <h2 id="stepTitle">
+                        Persiapan Dokumen
+                    </h2>
+
+                    <p id="stepDescription">
+                        Pastikan Anda telah membawa Kartu Tanda
+                        Penduduk (KTP) dan surat undangan
+                        pemungutan suara yang sebelumnya
+                        diberikan oleh petugas.
+                    </p>
+
+                    <div class="guide-note" id="stepNote">
+                        <span>ⓘ</span>
+
+                        <p>
+                            Pastikan seluruh dokumen telah
+                            disiapkan sebelum menuju bilik suara.
+                        </p>
+                    </div>
+
+
+                    <!-- NAVIGATION BUTTONS -->
+                    <div class="guide-navigation">
+
+                        <button
+                            type="button"
+                            id="prevButton"
+                            class="guide-btn btn-prev"
+                            disabled
+                        >
+                            ← Sebelumnya
+                        </button>
+
+                        <button
+                            type="button"
+                            id="nextButton"
+                            class="guide-btn btn-next"
+                        >
+                            Selanjutnya →
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- BOTTOM INFORMATION -->
+            <div class="guide-footer-info">
+
+                <div class="guide-info-icon">
+                    !
+                </div>
+
+                <div>
+                    <strong>Perhatikan setiap tahapan</strong>
+
+                    <p>
+                        Pastikan Anda memahami prosedur
+                        pemungutan suara sebelum memulai
+                        simulasi pemilihan.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div>
+                <h3>PILKADES DIGITAL KALENTAMBO</h3>
+
+                <p>
+                    Simulasi sistem pemungutan suara
+                    digital Desa Kalentambo.
+                </p>
+            </div>
+
+            <div class="footer-right">
+                © 2026 Pilkades Kalentambo
+                <br>
+                <span>DEMO / SIMULASI - BUKAN PEMILIHAN RESMI</span>
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="js/panduan.js"></script>
+
+</body>
+</html>
