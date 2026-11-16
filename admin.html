@@ -47,10 +47,6 @@
                     ☑ <span>e-Voting</span>
                 </a>
 
-                <a href="hasil.html">
-                    ▥ <span>Hasil Pemilihan</span>
-                </a>
-
                 <a href="admin.html" class="active" aria-current="page">
                     ⚙ <span>Admin</span>
                 </a>
@@ -101,87 +97,17 @@
 
 
             <!-- STATISTICS -->
-            <section class="stats-grid" aria-label="Statistik pemilihan">
+            <section class="stats-grid" aria-label="Statistik peserta">
 
                 <article class="stat-card">
-                    <span class="stat-icon">☑</span>
-                    <p>Total suara tercatat</p>
-                    <h2 id="totalVotes">0</h2>
-                </article>
 
-                <article class="stat-card">
-                    <span class="stat-icon">✓</span>
-                    <p>Suara sah</p>
-                    <h2 id="validVotes">0</h2>
-                </article>
-
-                <article class="stat-card">
                     <span class="stat-icon">👥</span>
-                    <p>Kode peserta digunakan</p>
+
+                    <p>Kode Peserta yang Digunakan</p>
+
                     <h2 id="usedParticipants">0</h2>
+
                 </article>
-
-            </section>
-
-
-            <!-- CANDIDATE SETTINGS -->
-            <section class="panel">
-
-                <div class="panel-heading">
-                    <div>
-                        <h2>Pengaturan Data Calon</h2>
-                        <p>Atur nama tampilan calon untuk simulasi.</p>
-                    </div>
-                </div>
-
-                <form id="candidateForm" class="candidate-form">
-
-                    <div class="form-group">
-                        <label for="candidate1">
-                            Calon nomor urut 1
-                        </label>
-
-                        <input
-                            type="text"
-                            id="candidate1"
-                            maxlength="80"
-                            required
-                            placeholder="Nama calon nomor urut 1"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="candidate2">
-                            Calon nomor urut 2
-                        </label>
-
-                        <input
-                            type="text"
-                            id="candidate2"
-                            maxlength="80"
-                            required
-                            placeholder="Nama calon nomor urut 2"
-                        >
-                    </div>
-
-                    <button type="submit" class="primary-button">
-                        Simpan Nama Calon
-                    </button>
-
-                    <p
-                        id="candidateMessage"
-                        class="form-message"
-                        role="status"
-                        aria-live="polite"
-                    ></p>
-
-                </form>
-
-                <p class="helper-text">
-                    Nama yang disimpan di sini menjadi konfigurasi
-                    tampilan calon pada halaman e-Voting dan hasil
-                    selama menggunakan browser dan penyimpanan yang sama.
-                </p>
 
             </section>
 
@@ -195,22 +121,20 @@
                 <div class="panel-heading">
 
                     <div>
-                        <h2>QR Code Peserta</h2>
+                        <h2>Generator QR Peserta</h2>
 
                         <p>
-                            Buat QR Code otomatis untuk 100 peserta
-                            simulasi Pilkades Digital Kalentambo.
+                            Buat dan unduh 100 QR Code peserta
+                            dalam satu file PDF.
                         </p>
                     </div>
 
-                    <span class="demo-label">
-                        QR GENERATOR
-                    </span>
+                    <span class="demo-label">QR GENERATOR</span>
 
                 </div>
 
 
-                <!-- INFORMASI QR -->
+                <!-- INFORMASI PESERTA -->
                 <div class="qr-info-grid">
 
                     <div class="qr-info-card">
@@ -231,7 +155,7 @@
                 </div>
 
 
-                <!-- KONTROL QR -->
+                <!-- TOMBOL GENERATOR -->
                 <div class="qr-controls">
 
                     <button
@@ -239,25 +163,7 @@
                         id="generateQrButton"
                         class="primary-button"
                     >
-                        ✦ Buat 100 QR Code
-                    </button>
-
-                    <button
-                        type="button"
-                        id="downloadAllQrButton"
-                        class="secondary-button"
-                        disabled
-                    >
-                        ↓ Unduh Semua QR
-                    </button>
-
-                    <button
-                        type="button"
-                        id="printQrButton"
-                        class="secondary-button"
-                        disabled
-                    >
-                        ⎙ Cetak Kartu Peserta
+                        ↓ Generate &amp; Download PDF
                     </button>
 
                 </div>
@@ -269,17 +175,17 @@
                     <div class="qr-status-heading">
                         <strong>Status Generator</strong>
 
-                        <span id="qrCount">
-                            0 / 100 QR Code
-                        </span>
+                        <span id="qrCount">0 / 100 QR Code</span>
                     </div>
 
                     <div class="bar-track">
+
                         <div
                             id="qrProgressBar"
                             class="bar-fill bar-one"
                             style="width: 0%;"
                         ></div>
+
                     </div>
 
                     <p
@@ -288,56 +194,25 @@
                         role="status"
                         aria-live="polite"
                     >
-                        QR Code belum dibuat.
+                        Klik tombol untuk membuat PDF QR Code peserta.
                     </p>
 
                 </div>
 
 
-                <!-- AREA QR CODE -->
-                <div class="qr-result-section">
-
-                    <div class="qr-result-heading">
-                        <h3>Daftar QR Code Peserta</h3>
-
-                        <p>
-                            QR Code yang berhasil dibuat akan muncul
-                            di bawah ini.
-                        </p>
-                    </div>
-
-                    <div
-                        id="qrCodeGrid"
-                        class="qr-code-grid"
-                        aria-live="polite"
-                    >
-
-                        <div class="qr-empty-state">
-                            <div class="qr-empty-icon">▦</div>
-
-                            <strong>Belum ada QR Code</strong>
-
-                            <p>
-                                Klik tombol "Buat 100 QR Code"
-                                untuk memulai generator.
-                            </p>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
                 <p class="helper-text">
-                    QR Code ini berisi kode peserta simulasi KLT001–KLT100.
-                    Jangan gunakan QR statis ini sebagai satu-satunya
-                    mekanisme autentikasi pada pemilihan resmi.
+                    Sistem akan membuat 100 QR Code dengan nomor peserta
+                    KLT001–KLT100 dan mengunduhnya dalam format PDF.
                 </p>
 
             </section>
 
 
-            <!-- VOTE RECAPITULATION -->
+
+            <!-- =====================================
+                 VOTE RECAPITULATION
+            ====================================== -->
+
             <section class="panel">
 
                 <div class="panel-heading">
@@ -362,13 +237,13 @@
                 </div>
 
 
-                <!-- CANDIDATE 1 -->
+                <!-- KANDIDAT TUNGGAL -->
                 <div class="vote-row">
 
                     <div class="vote-label">
 
                         <strong id="candidateName1">
-                            Calon nomor urut 1
+                            Gilang Ramadhan, S.Pd.
                         </strong>
 
                         <span id="candidateVotes1">
@@ -378,35 +253,13 @@
                     </div>
 
                     <div class="bar-track">
+
                         <div
                             id="candidateBar1"
                             class="bar-fill bar-one"
+                            style="width: 0%;"
                         ></div>
-                    </div>
 
-                </div>
-
-
-                <!-- CANDIDATE 2 -->
-                <div class="vote-row">
-
-                    <div class="vote-label">
-
-                        <strong id="candidateName2">
-                            Calon nomor urut 2
-                        </strong>
-
-                        <span id="candidateVotes2">
-                            0 suara · 0.0%
-                        </span>
-
-                    </div>
-
-                    <div class="bar-track">
-                        <div
-                            id="candidateBar2"
-                            class="bar-fill bar-two"
-                        ></div>
                     </div>
 
                 </div>
@@ -426,7 +279,10 @@
             </section>
 
 
-            <!-- PARTICIPANT TABLE -->
+            <!-- =====================================
+                 PARTICIPANT TABLE
+            ====================================== -->
+
             <section class="panel">
 
                 <div class="panel-heading">
@@ -478,7 +334,10 @@
             </section>
 
 
-            <!-- RESET DATA -->
+            <!-- =====================================
+                 RESET DATA
+            ====================================== -->
+
             <section class="panel danger-panel">
 
                 <div class="panel-heading">
@@ -512,7 +371,10 @@
             </section>
 
 
-            <!-- FOOTER -->
+            <!-- =====================================
+                 FOOTER
+            ====================================== -->
+
             <footer class="dashboard-footer">
 
                 <span>

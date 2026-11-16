@@ -1,35 +1,27 @@
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="description" content="Simulasi pemungutan suara digital Pilkades Desa Kalentambo.">
     <meta name="theme-color" content="#102a43">
 
     <title>e-Voting - Pilkades Kalentambo</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/voting.css">
 
-    <!-- FONT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 </head>
 
 <body class="voting-body">
 
-    <!-- NAVBAR -->
     <header class="voting-navbar">
-
         <a href="index.html" class="brand" aria-label="Kembali ke halaman utama">
             <div class="brand-logo">K</div>
-
             <div class="brand-text">
                 <h3>PILKADES DIGITAL</h3>
                 <span>DESA KALENTAMBO</span>
@@ -41,64 +33,35 @@
             MODE SIMULASI
         </div>
 
-        <a href="index.html" class="exit-button">
-            Keluar
-        </a>
-
+        <a href="index.html" class="exit-button">Keluar</a>
     </header>
 
-
-    <!-- MAIN -->
     <main class="voting-main">
-
         <div class="voting-container">
 
-            <!-- HEADER -->
             <div class="voting-heading">
-
-                <span class="voting-label">
-                    BILIK SUARA DIGITAL
-                </span>
-
+                <span class="voting-label">BILIK SUARA DIGITAL</span>
                 <h1>Pemungutan Suara</h1>
-
-                <p>
-                    Ikuti tujuh langkah pemungutan suara digital
-                    Pilkades Desa Kalentambo.
-                </p>
-
+                <p>Ikuti enam tahap pemungutan suara digital Pilkades Desa Kalentambo.</p>
             </div>
 
-
-            <!-- PROGRESS -->
             <div class="voting-progress">
-
                 <div class="voting-progress-track">
                     <div id="votingProgressFill"></div>
                 </div>
 
                 <div class="voting-step-label">
-                    <span id="votingStepText">Langkah 1 dari 7</span>
+                    <span id="votingStepText">Langkah 1 dari 6</span>
                     <span id="votingStepName">Persiapan Pemilih</span>
                 </div>
-
             </div>
 
-
-            <!-- VOTING SCREEN -->
             <section class="voting-screen" aria-label="Tahapan pemungutan suara">
 
-
-                <!-- =====================================
-                     LANGKAH 1: PERSIAPAN PEMILIH
-                ====================================== -->
-
+                <!-- LANGKAH 1: PERSIAPAN -->
                 <div class="voting-panel active" id="step1">
-
                     <div class="panel-icon">🪪</div>
-
                     <span class="panel-label">LANGKAH 01</span>
-
                     <h2>Persiapan Pemilih</h2>
 
                     <p class="panel-description">
@@ -107,15 +70,11 @@
                     </p>
 
                     <div class="preparation-card">
-
                         <div class="preparation-icon">📄</div>
-
                         <h3>Surat Undangan Pemungutan Suara</h3>
-
                         <p>
                             Surat undangan berisi identitas pemilih
-                            dan QR Code khusus yang digunakan
-                            untuk melakukan verifikasi.
+                            dan QR Code khusus yang digunakan untuk verifikasi.
                         </p>
 
                         <div class="preparation-notice">
@@ -125,427 +84,166 @@
                                 Jangan memberikan QR Code kepada orang lain.
                             </p>
                         </div>
-
                     </div>
 
-                    <div
-                        class="panel-message"
-                        id="preparationMessage"
-                        role="status"
-                        aria-live="polite"
-                    ></div>
+                    <div class="panel-message" id="preparationMessage"
+                         role="status" aria-live="polite"></div>
 
-                    <button
-                        type="button"
-                        class="voting-primary"
-                        id="startVotingButton"
-                    >
+                    <button type="button" class="voting-primary" id="startVotingButton">
                         Saya Sudah Siap →
                     </button>
-
                 </div>
 
-
-                <!-- =====================================
-                     LANGKAH 2: SIDIK JARI DAN QR
-                ====================================== -->
-
+                <!-- LANGKAH 2: VERIFIKASI QR -->
                 <div class="voting-panel" id="step2">
-
-                    <div class="panel-icon">👆</div>
-
+                    <div class="panel-icon">📷</div>
                     <span class="panel-label">LANGKAH 02</span>
-
-                    <h2>Pemindaian Sidik Jari dan Kode QR</h2>
+                    <h2>Verifikasi QR Code</h2>
 
                     <p class="panel-description">
-                        Letakkan ibu jari pada area pemindaian,
-                        kemudian pindai QR Code pada surat undangan
-                        menggunakan kamera tablet.
+                        Arahkan kamera ke QR Code yang terdapat pada
+                        surat undangan pemungutan suara.
                     </p>
 
-
-                    <!-- SIMULASI SIDIK JARI -->
-                    <div class="verification-section">
-
-                        <h3>1. Pemindaian Sidik Jari</h3>
-
-                        <div
-                            class="fingerprint-area"
-                            id="fingerprintArea"
-                            aria-label="Area simulasi sidik jari"
-                        >
-
-                            <div class="fingerprint-icon">☝</div>
-
-                            <div class="scan-line"></div>
-
-                            <span id="fingerprintText">
-                                SIAP MELAKUKAN PEMINDAIAN
-                            </span>
-
+                    <div class="qr-scanner-container">
+                        <div class="qr-scanner-heading">
+                            <h4>Arahkan Kamera ke QR Code</h4>
+                            <p>Letakkan QR Code di dalam area pemindaian.</p>
                         </div>
 
-                        <div
-                            class="panel-message"
-                            id="fingerprintMessage"
-                            role="status"
-                            aria-live="polite"
-                        ></div>
+                        <div id="qrReader"
+                             aria-label="Area pemindaian QR menggunakan kamera"></div>
 
-                        <button
-                            type="button"
-                            class="voting-secondary"
-                            id="fingerprintButton"
-                        >
-                            Mulai Simulasi Sidik Jari
-                        </button>
-
-                    </div>
-
-
-                    <!-- PEMINDAIAN QR -->
-                    <div class="verification-section">
-
-                        <h3>2. Pindai QR Code Surat Undangan</h3>
-
-                        <p class="section-description">
-                            Arahkan kamera ke QR Code pada surat undangan.
-                            Pastikan QR berada di dalam area pemindaian.
-                        </p>
-
-                        <div class="qr-scanner-container">
-
-                            <div class="qr-scanner-heading">
-                                <h4>Arahkan Kamera ke QR Code</h4>
-                                <p>
-                                    Letakkan QR Code di dalam area pemindaian.
-                                </p>
-                            </div>
-
-                            <!-- AREA KAMERA -->
-                            <div
-                                id="qrReader"
-                                aria-label="Area pemindaian QR menggunakan kamera"
-                            ></div>
-
-                            <!-- FRAME PEMINDAIAN -->
-                            <div class="qr-scanner-instruction">
-                                Posisikan QR Code di tengah kamera
-                            </div>
-
-                            <!-- KONTROL KAMERA -->
-                            <div class="qr-camera-controls">
-
-                                <button
-                                    type="button"
-                                    class="voting-primary"
-                                    id="startQrCamera"
-                                >
-                                    Aktifkan Kamera
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="voting-secondary"
-                                    id="stopQrCamera"
-                                    disabled
-                                >
-                                    Matikan Kamera
-                                </button>
-
-                            </div>
-
-                            <!-- STATUS KAMERA -->
-                            <div
-                                class="panel-message"
-                                id="cameraMessage"
-                                role="status"
-                                aria-live="polite"
-                            >
-                                Kamera belum diaktifkan.
-                            </div>
-
+                        <div class="qr-scanner-instruction">
+                            Posisikan QR Code di tengah kamera
                         </div>
 
+                        <div class="qr-camera-controls">
+                            <button type="button" class="voting-primary" id="startQrCamera">
+                                Aktifkan Kamera
+                            </button>
+
+                            <button type="button" class="voting-secondary"
+                                    id="stopQrCamera" disabled>
+                                Matikan Kamera
+                            </button>
+                        </div>
+
+                        <div class="panel-message" id="cameraMessage"
+                             role="status" aria-live="polite">
+                            Kamera belum diaktifkan.
+                        </div>
                     </div>
 
+                    <div class="panel-message" id="qrMessage"
+                         role="status" aria-live="polite"></div>
 
-                    <!-- STATUS VERIFIKASI -->
-                    <div
-                        class="panel-message"
-                        id="qrMessage"
-                        role="status"
-                        aria-live="polite"
-                    ></div>
-
-                    <button
-                        type="button"
-                        class="voting-primary"
-                        id="continueToCandidateButton"
-                        disabled
-                    >
+                    <button type="button" class="voting-primary"
+                            id="continueToCandidateButton" disabled>
                         Lanjutkan ke Pemilihan →
                     </button>
-
                 </div>
 
-
-                <!-- =====================================
-                     LANGKAH 3: MEMILIH KANDIDAT
-                ====================================== -->
-
+                <!-- LANGKAH 3: PEMILIHAN GILANG RAMADHAN -->
                 <div class="voting-panel" id="step3">
-
                     <div class="panel-icon">🗳️</div>
-
                     <span class="panel-label">LANGKAH 03</span>
-
-                    <h2>Memilih Calon Kepala Desa</h2>
+                    <h2>Pilih Calon Kepala Desa</h2>
 
                     <p class="panel-description">
-                        Setelah QR Code berhasil dipindai,
-                        silakan pilih satu calon kepala desa
-                        sesuai pilihan Anda.
+                        Berikut calon kepala desa yang tersedia.
+                        Tekan tombol PILIH untuk menentukan pilihan Anda.
                     </p>
 
                     <div class="candidate-grid">
-
-                        <!-- CALON NOMOR 1 -->
-                        <button
-                            type="button"
-                            class="candidate-card"
-                            data-candidate="1"
-                            aria-label="Pilih calon nomor urut 1"
-                        >
+                        <button type="button"
+                                class="candidate-card"
+                                data-candidate="1"
+                                aria-label="Pilih Gilang Ramadhan nomor urut 1">
 
                             <div class="candidate-number">01</div>
 
                             <div class="candidate-photo">
-
                                 <img
-                                    src="assets/calon-1.jpg"
-                                    alt="Foto calon nomor urut 1"
+                                    src="assets/calon-gilang.jpg"
+                                    alt="Foto Gilang Ramadhan"
                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                                 >
 
                                 <div class="photo-placeholder" style="display:none;">
-                                    FOTO CALON 1
+                                    FOTO CALON
                                 </div>
-
                             </div>
 
                             <h3>Gilang Ramadhan, S.Pd.</h3>
-
                             <span>CALON NOMOR URUT 1</span>
 
-                            <div class="candidate-check" aria-hidden="true">
-                                ✓
-                            </div>
-
+                            <div class="candidate-check" aria-hidden="true">✓</div>
                         </button>
-
-
-                        <!-- CALON NOMOR 2 -->
-                        <button
-                            type="button"
-                            class="candidate-card"
-                            data-candidate="2"
-                            aria-label="Pilih calon nomor urut 2"
-                        >
-
-                            <div class="candidate-number">02</div>
-
-                            <div class="candidate-photo">
-
-                                <img
-                                    src="assets/calon-2.jpg"
-                                    alt="Foto calon nomor urut 2"
-                                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-                                >
-
-                                <div class="photo-placeholder" style="display:none;">
-                                    FOTO CALON 2
-                                </div>
-
-                            </div>
-
-                            <h3>Calon Nomor Urut 2</h3>
-
-                            <span>CALON NOMOR URUT 2</span>
-
-                            <div class="candidate-check" aria-hidden="true">
-                                ✓
-                            </div>
-
-                        </button>
-
                     </div>
 
-                    <div
-                        class="panel-message"
-                        id="candidateMessage"
-                        role="status"
-                        aria-live="polite"
-                    ></div>
+                    <div class="panel-message" id="candidateMessage"
+                         role="status" aria-live="polite"></div>
 
-                    <button
-                        type="button"
-                        class="voting-primary"
-                        id="candidateButton"
-                        disabled
-                    >
-                        Pilih Kandidat Ini →
+                    <button type="button" class="voting-primary"
+                            id="candidateButton" disabled>
+                        PILIH KANDIDAT →
                     </button>
-
                 </div>
 
-
-                <!-- =====================================
-                     LANGKAH 4: KONFIRMASI PILIHAN
-                ====================================== -->
-
+                <!-- LANGKAH 4: KONFIRMASI AKHIR -->
                 <div class="voting-panel" id="step4">
-
                     <div class="panel-icon">☑️</div>
-
                     <span class="panel-label">LANGKAH 04</span>
-
                     <h2>Konfirmasi Pilihan</h2>
 
                     <p class="panel-description">
-                        Anda telah memilih calon kepala desa.
-                        Tekan tombol biru untuk melanjutkan
-                        proses pemungutan suara.
-                    </p>
-
-                    <div class="confirmation-card">
-
-                        <span>PILIHAN ANDA</span>
-
-                        <div
-                            class="confirmation-number"
-                            id="confirmNumber"
-                        >
-                            00
-                        </div>
-
-                        <div class="confirmation-photo">
-                            <img
-                                id="confirmPhoto"
-                                src="assets/calon-1.jpg"
-                                alt="Foto calon yang dipilih"
-                            >
-                        </div>
-
-                        <h3 id="confirmName">
-                            Belum ada pilihan
-                        </h3>
-
-                        <p>
-                            CALON KEPALA DESA KALENTAMBO
-                        </p>
-
-                    </div>
-
-                    <div class="confirmation-warning">
-                        Pastikan pilihan Anda sudah benar
-                        sebelum melanjutkan.
-                    </div>
-
-                    <button
-                        type="button"
-                        class="voting-primary"
-                        id="continueToFinalButton"
-                    >
-                        Lanjutkan →
-                    </button>
-
-                </div>
-
-
-                <!-- =====================================
-                     LANGKAH 5: KONFIRMASI AKHIR
-                ====================================== -->
-
-                <div class="voting-panel" id="step5">
-
-                    <div class="panel-icon">🔐</div>
-
-                    <span class="panel-label">LANGKAH 05</span>
-
-                    <h2>Konfirmasi Akhir</h2>
-
-                    <p class="panel-description">
-                        Apakah Anda yakin akan memilih
-                        calon kepala desa berikut?
+                        Apakah Anda yakin akan memilih calon kepala desa berikut?
+                        Pastikan pilihan Anda sudah benar.
                     </p>
 
                     <div class="final-confirmation-card">
-
                         <div class="confirmation-photo">
                             <img
                                 id="finalConfirmPhoto"
-                                src="assets/calon-1.jpg"
-                                alt="Foto calon pilihan akhir"
+                                src="assets/calon-gilang.jpg"
+                                alt="Foto Gilang Ramadhan"
                             >
                         </div>
 
-                        <div
-                            class="confirmation-number"
-                            id="finalConfirmNumber"
-                        >
-                            00
+                        <div class="confirmation-number" id="finalConfirmNumber">
+                            01
                         </div>
 
-                        <h3 id="finalConfirmName">
-                            Belum ada pilihan
-                        </h3>
+                        <h3 id="finalConfirmName">Gilang Ramadhan, S.Pd.</h3>
+                        <span>CALON KEPALA DESA KALENTAMBO</span>
+                    </div>
 
-                        <span>CALON KEPALA DESA</span>
-
+                    <div class="confirmation-warning">
+                        Pilihan yang sudah disimpan tidak dapat diubah.
+                        Pastikan Anda telah menentukan pilihan dengan benar.
                     </div>
 
                     <div class="final-confirmation-actions">
-
-                        <button
-                            type="button"
-                            class="voting-danger"
-                            id="repeatChoiceButton"
-                        >
+                        <button type="button" class="voting-danger"
+                                id="repeatChoiceButton">
                             ULANGI
                         </button>
 
-                        <button
-                            type="button"
-                            class="voting-primary"
-                            id="submitVoteButton"
-                        >
+                        <button type="button" class="voting-primary"
+                                id="submitVoteButton">
                             PILIH
                         </button>
-
                     </div>
 
-                    <div
-                        class="panel-message"
-                        id="finalMessage"
-                        role="status"
-                        aria-live="polite"
-                    ></div>
-
+                    <div class="panel-message" id="finalMessage"
+                         role="status" aria-live="polite"></div>
                 </div>
 
-
-                <!-- =====================================
-                     LANGKAH 6: SUARA BERHASIL DISIMPAN
-                ====================================== -->
-
-                <div class="voting-panel" id="step6">
-
+                <!-- LANGKAH 5: SUARA BERHASIL DISIMPAN -->
+                <div class="voting-panel" id="step5">
                     <div class="success-icon">✓</div>
-
-                    <span class="panel-label">LANGKAH 06</span>
-
+                    <span class="panel-label">LANGKAH 05</span>
                     <h2>Terima Kasih!</h2>
 
                     <p class="success-description">
@@ -553,26 +251,18 @@
                     </p>
 
                     <div class="success-card">
-
                         <strong>PEMILIHAN BERHASIL</strong>
 
                         <p>
-                            Terima kasih telah menggunakan
-                            hak pilih Anda dalam simulasi
-                            Pilkades Digital Desa Kalentambo.
+                            Terima kasih telah menggunakan hak pilih Anda
+                            dalam simulasi Pilkades Digital Desa Kalentambo.
                         </p>
 
                         <div class="success-notification">
                             Terima kasih, suara berhasil disimpan.
                         </div>
 
-                        <div
-                            class="receipt-code"
-                            id="receiptCode"
-                        >
-                            -
-                        </div>
-
+                        <div class="receipt-code" id="receiptCode">-</div>
                     </div>
 
                     <div class="success-icon-small">
@@ -580,53 +270,34 @@
                         <p>Data suara simulasi berhasil direkam.</p>
                     </div>
 
-                    <button
-                        type="button"
-                        class="voting-primary"
-                        id="continueToReceiptButton"
-                    >
+                    <button type="button" class="voting-primary"
+                            id="continueToReceiptButton">
                         Lanjutkan ke Bukti Pemilihan →
                     </button>
-
                 </div>
 
-
-                <!-- =====================================
-                     LANGKAH 7: BUKTI PEMILIHAN
-                ====================================== -->
-
-                <div class="voting-panel" id="step7">
-
+                <!-- LANGKAH 6: BUKTI PEMILIHAN -->
+                <div class="voting-panel" id="step6">
                     <div class="panel-icon">🧾</div>
-
-                    <span class="panel-label">LANGKAH 07</span>
-
+                    <span class="panel-label">LANGKAH 06</span>
                     <h2>Pengambilan Bukti Pemilihan</h2>
 
                     <p class="panel-description">
-                        Petugas dapat memberikan hasil cetak
-                        sebagai bukti bahwa pemilih telah
-                        menggunakan hak pilihnya.
+                        Petugas dapat memberikan hasil cetak sebagai
+                        bukti bahwa pemilih telah menggunakan hak pilihnya.
                     </p>
 
                     <div class="print-receipt" id="printReceipt">
-
                         <div class="receipt-header">
-
                             <div class="receipt-logo">K</div>
-
                             <h3>PILKADES DIGITAL</h3>
-
                             <strong>DESA KALENTAMBO</strong>
-
                             <span>BUKTI PEMILIHAN DIGITAL</span>
-
                         </div>
 
                         <div class="receipt-divider"></div>
 
                         <div class="receipt-information">
-
                             <div class="receipt-row">
                                 <span>Status</span>
                                 <strong>BERHASIL</strong>
@@ -641,7 +312,6 @@
                                 <span>Waktu Pemilihan</span>
                                 <strong id="printReceiptDate">-</strong>
                             </div>
-
                         </div>
 
                         <div class="receipt-divider"></div>
@@ -652,11 +322,8 @@
                             <p>Suara berhasil disimpan.</p>
                         </div>
 
-                        <div
-                            class="qr-receipt"
-                            id="receiptQR"
-                            aria-label="QR Code bukti simulasi"
-                        ></div>
+                        <div class="qr-receipt" id="receiptQR"
+                             aria-label="QR Code bukti simulasi"></div>
 
                         <small class="receipt-qr-label">
                             QR CODE BUKTI SIMULASI
@@ -667,79 +334,47 @@
                             <br>
                             DESA KALENTAMBO
                         </div>
-
                     </div>
 
                     <div class="receipt-actions">
-
-                        <button
-                            type="button"
-                            class="voting-primary"
-                            id="printReceiptButton"
-                        >
+                        <button type="button" class="voting-primary"
+                                id="printReceiptButton">
                             🖨 Cetak Bukti Pemilihan
                         </button>
 
-                        <a
-                            href="hasil.html"
-                            class="voting-secondary result-link"
-                        >
+                        <a href="hasil.html"
+                           class="voting-secondary result-link">
                             Lihat Hasil Simulasi
                         </a>
 
-                        <a
-                            href="index.html"
-                            class="voting-secondary result-link"
-                        >
+                        <a href="index.html"
+                           class="voting-secondary result-link">
                             Kembali ke Halaman Utama
                         </a>
-
                     </div>
 
                     <div class="receipt-note">
                         Silakan berikan bukti cetak kepada pemilih
                         setelah proses pemungutan suara selesai.
                     </div>
-
                 </div>
 
             </section>
 
-
-            <!-- FOOTER -->
             <div class="voting-footer">
-
                 <span>DESA KALENTAMBO</span>
-
-                <span>
-                    SIMULASI E-VOTING • BUKAN PEMILIHAN RESMI
-                </span>
-
+                <span>SIMULASI E-VOTING • BUKAN PEMILIHAN RESMI</span>
             </div>
 
         </div>
-
     </main>
-
-
-    <!-- =====================================
-         JAVASCRIPT CONFIGURATION
-    ====================================== -->
 
     <script>
         window.KLT_CANDIDATE_CONFIG_KEY = "klt_candidate_config";
     </script>
 
-
-    <!-- QR CODE GENERATOR UNTUK BUKTI PEMILIHAN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-
-    <!-- QR CODE DECODER UNTUK KAMERA -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
-
-    <!-- MAIN VOTING JAVASCRIPT -->
     <script src="js/voting.js"></script>
 
 </body>

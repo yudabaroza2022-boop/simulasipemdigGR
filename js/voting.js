@@ -1,7 +1,7 @@
 
 /* =====================================================
    PILKADES DIGITAL KALENTAMBO
-   VOTING SYSTEM - 7 TAHAP
+   VOTING SYSTEM - 6 TAHAP
    QR ENGINE: jsQR
    DEMO ONLY - FRONTEND STORAGE
 ===================================================== */
@@ -18,17 +18,17 @@ const STORAGE_KEYS = {
     candidates: window.KLT_CANDIDATE_CONFIG_KEY || "klt_candidate_config"
 };
 
-const DEFAULT_CANDIDATES = {
-    1: "Gilang Ramadhan, S.Pd.",
-    2: "Calon Nomor Urut 2"
+const DEFAULT_CANDIDATE = {
+    number: 1,
+    name: "Gilang Ramadhan, S.Pd.",
+    photo: "assets/calon-gilang.jpg"
 };
 
 const STEP_NAMES = [
     "Persiapan Pemilih",
-    "Verifikasi Sidik Jari dan QR",
+    "Verifikasi QR Code",
     "Pemilihan Kandidat",
     "Konfirmasi Pilihan",
-    "Konfirmasi Akhir",
     "Suara Berhasil Disimpan",
     "Bukti Pemilihan"
 ];
@@ -38,16 +38,12 @@ const STEP_NAMES = [
 // =====================================================
 
 let currentStep = 1;
-
 let voterCode = "";
 let selectedCandidate = null;
 let receiptCode = "";
-
-let fingerprintVerified = false;
-let qrVerified = false;
-
-let fingerprintProcessing = false;
 let submitting = false;
+
+let qrVerified = false;
 
 let cameraStream = null;
 let scannerVideo = null;
@@ -65,7 +61,7 @@ let lastRejectedTime = 0;
 let lastScanTime = 0;
 let inversionScanCounter = 0;
 
-let candidates = getCandidates();
+let candidates = getCandidate();
 
 // =====================================================
 // 3. ELEMENT HTML
@@ -74,7 +70,7 @@ let candidates = getCandidates();
 const $ = id => document.getElementById(id);
 
 const panels = document.querySelectorAll(".voting-panel");
-const candidateCards = document.querySelectorAll(".candidate-card");
+const candidateCard = document.querySelector(".candidate-card");
 
 // Progress
 const progressFill = $("votingProgressFill");
@@ -84,12 +80,6 @@ const stepName = $("votingStepName");
 // Tahap 1
 const startVotingButton = $("startVotingButton");
 const preparationMessage = $("preparationMessage");
-
-// Tahap 2 - Fingerprint
-const fingerprintArea = $("fingerprintArea");
-const fingerprintText = $("fingerprintText");
-const fingerprintMessage = $("fingerprintMessage");
-const fingerprintButton = $("fingerprintButton");
 
 // Tahap 2 - QR
 const qrReader = $("qrReader");
@@ -104,12 +94,6 @@ const candidateButton = $("candidateButton");
 const candidateMessage = $("candidateMessage");
 
 // Tahap 4
-const confirmNumber = $("confirmNumber");
-const confirmName = $("confirmName");
-const confirmPhoto = $("confirmPhoto");
-const continueToFinalButton = $("continueToFinalButton");
-
-// Tahap 5
 const finalConfirmPhoto = $("finalConfirmPhoto");
 const finalConfirmNumber = $("finalConfirmNumber");
 const finalConfirmName = $("finalConfirmName");
@@ -117,11 +101,11 @@ const repeatChoiceButton = $("repeatChoiceButton");
 const submitVoteButton = $("submitVoteButton");
 const finalMessage = $("finalMessage");
 
-// Tahap 6
+// Tahap 5
 const receiptCodeElement = $("receiptCode");
 const continueToReceiptButton = $("continueToReceiptButton");
 
-// Tahap 7
+// Tahap 6
 const printReceiptCode = $("printReceiptCode");
 const printReceiptDate = $("printReceiptDate");
 const receiptQR = $("receiptQR");
@@ -173,54 +157,46 @@ function extractCandidateName(value) {
     return "";
 }
 
-function getCandidates() {
+function getCandidate() {
     const config = readStorage(STORAGE_KEYS.candidates, null);
 
-    if (!config || typeof config !== "object") {
-        return { ...DEFAULT_CANDIDATES };
-    }
+    let name = DEFAULT_CANDIDATE.name;
 
-    let first = "";
-    let second = "";
+    if (config && typeof config === "object") {
+        name = extractCandidateName(
+            config.candidate1 ??
+            config[1] ??
+            config["1"] ??
+            config.candidateName1 ??
+            config.namaCalon1
+        ) || name;
 
-    first = extractCandidateName(
-        config.candidate1 ??
-        config[1] ??
-        config["1"] ??
-        config.candidateName1 ??
-        config.namaCalon1
-    );
-
-    second = extractCandidateName(
-        config.candidate2 ??
-        config[2] ??
-        config["2"] ??
-        config.candidateName2 ??
-        config.namaCalon2
-    );
-
-    if (Array.isArray(config.candidates)) {
-        first = extractCandidateName(config.candidates[0]) || first;
-        second = extractCandidateName(config.candidates[1]) || second;
+        if (Array.isArray(config.candidates)) {
+            name = extractCandidateName(config.candidates[0]) || name;
+        }
     }
 
     return {
-        1: first || DEFAULT_CANDIDATES[1],
-        2: second || DEFAULT_CANDIDATES[2]
+        number: 1,
+        name,
+        photo: DEFAULT_CANDIDATE.photo
     };
 }
 
-function updateCandidateNames() {
-    candidates = getCandidates();
+function updateCandidateInformation() {
+    candidates = getCandidate();
 
-    candidateCards.forEach(card => {
-        const number = Number(card.dataset.candidate);
-        const title = card.querySelector("h3");
+    if (candidateCard) {
+        const title = candidateCard.querySelector("h3");
 
-        if (title && candidates[number]) {
-            title.textContent = candidates[number];
+        if (title) {
+            title.textContent = candidates.name;
         }
-    });
+    }
+
+    if (finalConfirmName) {
+        finalConfirmName.textContent = candidates.name;
+    }
 }
 
 // =====================================================
@@ -244,7 +220,6 @@ function clearMessage(element) {
 function clearAllMessages() {
     [
         preparationMessage,
-        fingerprintMessage,
         cameraMessage,
         qrMessage,
         candidateMessage,
@@ -254,8 +229,7 @@ function clearAllMessages() {
 
 function updateVerificationStatus() {
     if (continueToCandidateButton) {
-        continueToCandidateButton.disabled =
-            !(fingerprintVerified && qrVerified);
+        continueToCandidateButton.disabled = !qrVerified;
     }
 
     if (startQrCameraButton) {
@@ -297,11 +271,11 @@ function isVoterAlreadyUsed(code) {
 }
 
 // =====================================================
-// 8. NAVIGASI 7 TAHAP
+// 8. NAVIGASI 6 TAHAP
 // =====================================================
 
 function showStep(step) {
-    if (step < 1 || step > 7) return;
+    if (step < 1 || step > 6) return;
 
     const target = $(`step${step}`);
 
@@ -323,11 +297,11 @@ function showStep(step) {
     target.classList.add("active");
 
     if (progressFill) {
-        progressFill.style.width = `${(step / 7) * 100}%`;
+        progressFill.style.width = `${(step / 6) * 100}%`;
     }
 
     if (stepText) {
-        stepText.textContent = `Tahap ${step} dari 7`;
+        stepText.textContent = `Langkah ${step} dari 6`;
     }
 
     if (stepName) {
@@ -343,7 +317,7 @@ function showStep(step) {
         updateVerificationStatus();
     }
 
-    if (step === 7) {
+    if (step === 6) {
         updateReceiptInformation();
         generateReceiptQR();
     }
@@ -361,60 +335,7 @@ if (startVotingButton) {
 }
 
 // =====================================================
-// 10. TAHAP 2 - SIMULASI SIDIK JARI
-// =====================================================
-
-if (fingerprintButton) {
-    fingerprintButton.addEventListener("click", function() {
-        if (fingerprintProcessing || fingerprintVerified) return;
-
-        fingerprintProcessing = true;
-
-        this.disabled = true;
-        this.textContent = "Sedang Memindai...";
-
-        if (fingerprintArea) {
-            fingerprintArea.classList.remove("success");
-            fingerprintArea.classList.add("scanning");
-        }
-
-        if (fingerprintText) {
-            fingerprintText.textContent = "MEMPROSES SIMULASI...";
-        }
-
-        clearMessage(fingerprintMessage);
-
-        setTimeout(() => {
-            fingerprintProcessing = false;
-            fingerprintVerified = true;
-
-            if (fingerprintArea) {
-                fingerprintArea.classList.remove("scanning");
-                fingerprintArea.classList.add("success");
-            }
-
-            if (fingerprintText) {
-                fingerprintText.textContent = "SIMULASI BERHASIL";
-            }
-
-            if (fingerprintButton) {
-                fingerprintButton.textContent = "Verifikasi Berhasil ✓";
-            }
-
-            showMessage(
-                fingerprintMessage,
-                "Simulasi verifikasi sidik jari berhasil.",
-                true
-            );
-
-            updateVerificationStatus();
-
-        }, 1200);
-    });
-}
-
-// =====================================================
-// 11. MEMBUAT VIDEO DAN CANVAS SCANNER
+// 10. MEMBUAT VIDEO DAN CANVAS SCANNER
 // =====================================================
 
 function createScannerElements() {
@@ -455,7 +376,7 @@ function createScannerElements() {
 }
 
 // =====================================================
-// 12. MENGHENTIKAN KAMERA
+// 11. MENGHENTIKAN KAMERA
 // =====================================================
 
 async function stopQrCamera() {
@@ -487,7 +408,7 @@ async function stopQrCamera() {
 }
 
 // =====================================================
-// 13. MENDAPATKAN STREAM KAMERA
+// 12. MENDAPATKAN STREAM KAMERA
 // =====================================================
 
 async function getCameraStream() {
@@ -500,27 +421,17 @@ async function getCameraStream() {
     const cameraOptions = [
         {
             video: {
-                facingMode: {
-                    ideal: "environment"
-                },
-                width: {
-                    ideal: 1920
-                },
-                height: {
-                    ideal: 1080
-                }
+                facingMode: { ideal: "environment" },
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
             },
             audio: false
         },
         {
             video: {
                 facingMode: "user",
-                width: {
-                    ideal: 1280
-                },
-                height: {
-                    ideal: 720
-                }
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
             },
             audio: false
         },
@@ -556,7 +467,7 @@ async function getCameraStream() {
 }
 
 // =====================================================
-// 14. DIAGNOSTIK KAMERA
+// 13. DIAGNOSTIK KAMERA
 // =====================================================
 
 function getCameraErrorMessage(error) {
@@ -586,7 +497,7 @@ function getCameraErrorMessage(error) {
 }
 
 // =====================================================
-// 15. MEMBACA ISI QR
+// 14. MEMBACA ISI QR
 // =====================================================
 
 function extractVoterCodeFromQR(decodedText) {
@@ -598,7 +509,6 @@ function extractVoterCodeFromQR(decodedText) {
 
     text = text.replace(/\s+/g, "");
 
-    // Format QR berbentuk JSON
     if (text.startsWith("{")) {
         try {
             const data = JSON.parse(text);
@@ -626,7 +536,6 @@ function extractVoterCodeFromQR(decodedText) {
         }
     }
 
-    // Format QR-KLT001 atau QRKLT001
     const qrMatch = text.match(
         /(?:^|[^A-Z0-9])QR-?(KLT(?:00[1-9]|0[1-9]\d|100))(?:$|[^A-Z0-9])/
     );
@@ -635,7 +544,6 @@ function extractVoterCodeFromQR(decodedText) {
         return qrMatch[1];
     }
 
-    // Format KLT001
     if (isValidVoterCode(text)) {
         return text;
     }
@@ -644,7 +552,7 @@ function extractVoterCodeFromQR(decodedText) {
 }
 
 // =====================================================
-// 16. MEMPROSES QR YANG TERDETEKSI
+// 15. MEMPROSES QR YANG TERDETEKSI
 // =====================================================
 
 async function processScannedQR(decodedText) {
@@ -658,10 +566,7 @@ async function processScannedQR(decodedText) {
 
     const rawText = String(decodedText).trim();
 
-    console.log("================================");
-    console.log("[jsQR] QR TERDETEKSI!");
-    console.log("[jsQR] Isi QR:", rawText);
-    console.log("================================");
+    console.log("[jsQR] QR TERDETEKSI:", rawText);
 
     const code = extractVoterCodeFromQR(rawText);
 
@@ -703,7 +608,6 @@ async function processScannedQR(decodedText) {
         return;
     }
 
-    // Kunci hanya setelah kode QR valid
     qrScanLocked = true;
     qrVerified = true;
     voterCode = code;
@@ -718,7 +622,7 @@ async function processScannedQR(decodedText) {
 
     showMessage(
         qrMessage,
-        "Identitas melalui QR berhasil diverifikasi.",
+        "QR Code berhasil diverifikasi. Silakan lanjutkan.",
         true
     );
 
@@ -728,7 +632,7 @@ async function processScannedQR(decodedText) {
 }
 
 // =====================================================
-// 17. OPTIMASI PEMINDAIAN QR
+// 16. OPTIMASI PEMINDAIAN QR
 // =====================================================
 
 function scanVideoFrame() {
@@ -744,7 +648,6 @@ function scanVideoFrame() {
 
     const now = performance.now();
 
-    // Hindari proses decoding bertumpuk
     if (
         scannerVideo.readyState >= scannerVideo.HAVE_ENOUGH_DATA &&
         !qrDecodeInProgress &&
@@ -759,10 +662,6 @@ function scanVideoFrame() {
             qrDecodeInProgress = true;
 
             try {
-                /*
-                 * Batasi resolusi pemrosesan.
-                 * Rasio gambar tetap dipertahankan.
-                 */
                 const maxWidth = 1280;
 
                 const scale = Math.min(
@@ -798,13 +697,6 @@ function scanVideoFrame() {
                     height
                 );
 
-                /*
-                 * Mayoritas QR yang dihasilkan admin
-                 * menggunakan pola hitam di atas putih.
-                 *
-                 * Mode normal dicoba lebih dahulu
-                 * agar decoding lebih ringan.
-                 */
                 let code = jsQR(
                     imageData.data,
                     width,
@@ -814,10 +706,6 @@ function scanVideoFrame() {
                     }
                 );
 
-                /*
-                 * Setiap beberapa frame, coba mode inversi
-                 * untuk mengantisipasi QR dengan warna terbalik.
-                 */
                 inversionScanCounter++;
 
                 if (
@@ -835,16 +723,6 @@ function scanVideoFrame() {
                 }
 
                 if (code && code.data) {
-                    console.log(
-                        "[jsQR] HASIL DECODE:",
-                        code.data
-                    );
-
-                    /*
-                     * Jangan mengunci QR di sini.
-                     * processScannedQR yang menentukan
-                     * apakah QR valid atau tidak.
-                     */
                     processScannedQR(code.data);
                 }
 
@@ -866,7 +744,7 @@ function scanVideoFrame() {
 }
 
 // =====================================================
-// 18. MEMULAI SCANNER jsQR
+// 17. MEMULAI SCANNER jsQR
 // =====================================================
 
 async function startQrCamera() {
@@ -917,7 +795,6 @@ async function startQrCamera() {
     try {
         await stopQrCamera();
 
-        // Kembalikan status proses mulai kamera
         qrCameraStarting = true;
         updateVerificationStatus();
 
@@ -940,11 +817,6 @@ async function startQrCamera() {
 
         console.log("[jsQR] Scanner aktif.");
 
-        console.log("[jsQR] Resolusi video:", {
-            width: scannerVideo.videoWidth,
-            height: scannerVideo.videoHeight
-        });
-
         updateVerificationStatus();
 
         scannerAnimation = requestAnimationFrame(scanVideoFrame);
@@ -966,7 +838,7 @@ async function startQrCamera() {
 }
 
 // =====================================================
-// 19. EVENT TOMBOL KAMERA
+// 18. EVENT TOMBOL KAMERA
 // =====================================================
 
 if (startQrCameraButton) {
@@ -984,15 +856,15 @@ if (stopQrCameraButton) {
 }
 
 // =====================================================
-// 20. LANJUT KE PEMILIHAN
+// 19. LANJUT KE PEMILIHAN
 // =====================================================
 
 if (continueToCandidateButton) {
     continueToCandidateButton.addEventListener("click", function() {
-        if (!fingerprintVerified || !qrVerified) {
+        if (!qrVerified || !voterCode) {
             showMessage(
                 qrMessage,
-                "Selesaikan verifikasi sidik jari dan QR terlebih dahulu."
+                "Pindai dan verifikasi QR Code terlebih dahulu."
             );
 
             return;
@@ -1003,24 +875,16 @@ if (continueToCandidateButton) {
 }
 
 // =====================================================
-// 21. TAHAP 3 - PILIH KANDIDAT
+// 20. TAHAP 3 - PILIH GILANG RAMADHAN
 // =====================================================
 
-candidateCards.forEach(card => {
-    card.addEventListener("click", function() {
+if (candidateCard) {
+    candidateCard.addEventListener("click", function() {
         if (submitting) return;
 
-        const number = Number(this.dataset.candidate);
+        selectedCandidate = 1;
 
-        if (![1, 2].includes(number)) return;
-
-        candidateCards.forEach(item => {
-            item.classList.remove("selected");
-        });
-
-        this.classList.add("selected");
-
-        selectedCandidate = number;
+        candidateCard.classList.add("selected");
 
         if (candidateButton) {
             candidateButton.disabled = false;
@@ -1028,98 +892,57 @@ candidateCards.forEach(card => {
 
         showMessage(
             candidateMessage,
-            `Anda memilih ${candidates[number]}.`,
+            `Anda memilih ${candidates.name}.`,
             true
         );
     });
-});
+}
 
 if (candidateButton) {
     candidateButton.addEventListener("click", function() {
-        if (![1, 2].includes(selectedCandidate)) {
+        if (selectedCandidate !== 1) {
             showMessage(
                 candidateMessage,
-                "Silakan pilih salah satu kandidat."
+                "Silakan pilih Gilang Ramadhan terlebih dahulu."
             );
 
             return;
         }
 
-        if (!fingerprintVerified || !qrVerified || !voterCode) {
+        if (!qrVerified || !voterCode) {
             showStep(2);
-            return;
-        }
-
-        updateCandidateNames();
-        updateConfirmationInformation();
-
-        showStep(4);
-    });
-}
-
-// =====================================================
-// 22. UPDATE KONFIRMASI
-// =====================================================
-
-function updateConfirmationInformation() {
-    if (![1, 2].includes(selectedCandidate)) return;
-
-    const number = String(selectedCandidate).padStart(2, "0");
-    const name = candidates[selectedCandidate];
-
-    if (confirmNumber) {
-        confirmNumber.textContent = number;
-    }
-
-    if (confirmName) {
-        confirmName.textContent = name;
-    }
-
-    if (finalConfirmNumber) {
-        finalConfirmNumber.textContent = number;
-    }
-
-    if (finalConfirmName) {
-        finalConfirmName.textContent = name;
-    }
-
-    const selectedCard = document.querySelector(
-        `.candidate-card[data-candidate="${selectedCandidate}"]`
-    );
-
-    const selectedImage = selectedCard?.querySelector("img");
-
-    if (selectedImage) {
-        if (confirmPhoto) {
-            confirmPhoto.src = selectedImage.src;
-        }
-
-        if (finalConfirmPhoto) {
-            finalConfirmPhoto.src = selectedImage.src;
-        }
-    }
-}
-
-// =====================================================
-// 23. TAHAP 4 - KONFIRMASI PILIHAN
-// =====================================================
-
-if (continueToFinalButton) {
-    continueToFinalButton.addEventListener("click", function() {
-        if (![1, 2].includes(selectedCandidate)) {
-            showStep(3);
             return;
         }
 
         updateConfirmationInformation();
         clearMessage(finalMessage);
 
-        showStep(5);
+        showStep(4);
     });
 }
 
 // =====================================================
-// 24. TAHAP 5 - ULANGI PILIHAN
+// 21. UPDATE INFORMASI KONFIRMASI
+// =====================================================
+
+function updateConfirmationInformation() {
+    if (selectedCandidate !== 1) return;
+
+    if (finalConfirmNumber) {
+        finalConfirmNumber.textContent = "01";
+    }
+
+    if (finalConfirmName) {
+        finalConfirmName.textContent = candidates.name;
+    }
+
+    if (finalConfirmPhoto) {
+        finalConfirmPhoto.src = candidates.photo;
+    }
+}
+
+// =====================================================
+// 22. TAHAP 4 - ULANGI PILIHAN
 // =====================================================
 
 if (repeatChoiceButton) {
@@ -1128,9 +951,9 @@ if (repeatChoiceButton) {
 
         selectedCandidate = null;
 
-        candidateCards.forEach(card => {
-            card.classList.remove("selected");
-        });
+        if (candidateCard) {
+            candidateCard.classList.remove("selected");
+        }
 
         if (candidateButton) {
             candidateButton.disabled = true;
@@ -1144,16 +967,16 @@ if (repeatChoiceButton) {
 }
 
 // =====================================================
-// 25. SIMPAN SUARA
+// 23. SIMPAN SUARA
 // =====================================================
 
 function saveVote() {
-    if (!voterCode || ![1, 2].includes(selectedCandidate)) {
+    if (!voterCode || selectedCandidate !== 1) {
         throw new Error("Data pemilih atau kandidat belum lengkap.");
     }
 
-    if (!fingerprintVerified || !qrVerified) {
-        throw new Error("Verifikasi pemilih belum lengkap.");
+    if (!qrVerified) {
+        throw new Error("Verifikasi QR Code belum dilakukan.");
     }
 
     const usedVoters = readStorage(
@@ -1184,7 +1007,7 @@ function saveVote() {
         "KLT-DEMO-" + Date.now().toString().slice(-8);
 
     const newVote = {
-        candidate: selectedCandidate,
+        candidate: 1,
         date: new Date().toISOString(),
         receipt: receiptCode
     };
@@ -1223,12 +1046,21 @@ function saveVote() {
 }
 
 // =====================================================
-// 26. TAHAP 5 - PILIH / SIMPAN
+// 24. TAHAP 4 - PILIH / SIMPAN SUARA
 // =====================================================
 
 if (submitVoteButton) {
     submitVoteButton.addEventListener("click", function() {
         if (submitting) return;
+
+        if (!qrVerified || !voterCode || selectedCandidate !== 1) {
+            showMessage(
+                finalMessage,
+                "Data pemilihan belum lengkap. Silakan periksa kembali."
+            );
+
+            return;
+        }
 
         submitting = true;
 
@@ -1246,7 +1078,7 @@ if (submitVoteButton) {
                 receiptCodeElement.textContent = receiptCode;
             }
 
-            showStep(6);
+            showStep(5);
 
             console.log("[VOTING] Suara berhasil disimpan.");
             console.log("[VOTING] Bukti:", receiptCode);
@@ -1272,7 +1104,7 @@ if (submitVoteButton) {
 }
 
 // =====================================================
-// 27. TAHAP 6 - LANJUT KE BUKTI
+// 25. TAHAP 5 - LANJUT KE BUKTI
 // =====================================================
 
 if (continueToReceiptButton) {
@@ -1286,12 +1118,12 @@ if (continueToReceiptButton) {
             return;
         }
 
-        showStep(7);
+        showStep(6);
     });
 }
 
 // =====================================================
-// 28. INFORMASI BUKTI
+// 26. INFORMASI BUKTI
 // =====================================================
 
 function updateReceiptInformation() {
@@ -1314,7 +1146,7 @@ function updateReceiptInformation() {
 }
 
 // =====================================================
-// 29. QR BUKTI PEMILIHAN
+// 27. QR BUKTI PEMILIHAN
 // =====================================================
 
 function generateReceiptQR() {
@@ -1323,8 +1155,7 @@ function generateReceiptQR() {
     receiptQR.innerHTML = "";
 
     if (typeof QRCode === "undefined") {
-        receiptQR.textContent =
-            "Library QRCode belum tersedia.";
+        receiptQR.textContent = "Library QRCode belum tersedia.";
 
         console.error("[VOTING] QRCode library tidak ditemukan.");
         return;
@@ -1353,23 +1184,526 @@ function generateReceiptQR() {
     }
 }
 
-// =====================================================
-// 30. CETAK BUKTI
-// =====================================================
+
+
+/* =====================================================
+   28. CETAK BUKTI PEMILIHAN
+   PILKADES DIGITAL DESA KALENTAMBO
+   A4 PORTRAIT - ONE PAGE
+===================================================== */
 
 if (printReceiptButton) {
-    printReceiptButton.addEventListener("click", function() {
-        if (!receiptCode) {
+
+    printReceiptButton.addEventListener("click", async function() {
+
+        const receipt = document.getElementById("printReceipt");
+
+        // Validasi bukti pemilihan
+        if (!receipt || !receiptCode) {
             alert("Bukti pemilihan belum tersedia.");
             return;
         }
 
-        window.print();
+        // Buka jendela cetak
+        const printWindow = window.open(
+            "",
+            "_blank",
+            "width=850,height=950"
+        );
+
+        if (!printWindow) {
+            alert(
+                "Jendela cetak diblokir browser. " +
+                "Izinkan pop-up untuk situs ini, lalu coba kembali."
+            );
+            return;
+        }
+
+        try {
+
+            /* =========================================
+               A. SALIN KARTU BUKTI
+            ========================================= */
+
+            const clonedReceipt = receipt.cloneNode(true);
+
+            // Ambil QR Code asli
+            const originalQr = receipt.querySelector(".qr-receipt");
+            const clonedQr = clonedReceipt.querySelector(".qr-receipt");
+
+            if (originalQr && clonedQr) {
+
+                let qrImageSource = "";
+
+                // Prioritaskan canvas untuk mendapatkan QR resolusi asli
+                const originalCanvas = originalQr.querySelector("canvas");
+
+                if (originalCanvas) {
+                    try {
+                        qrImageSource = originalCanvas.toDataURL("image/png");
+                    } catch (error) {
+                        console.warn("[PRINT] Canvas QR gagal dikonversi:", error);
+                    }
+                }
+
+                // Jika canvas tidak tersedia, gunakan gambar QR
+                if (!qrImageSource) {
+                    const originalImage = originalQr.querySelector("img");
+
+                    if (originalImage) {
+                        qrImageSource = originalImage.src;
+                    }
+                }
+
+                // Bersihkan QR ganda dan tampilkan satu gambar saja
+                clonedQr.innerHTML = "";
+
+                if (qrImageSource) {
+                    const qrImage = document.createElement("img");
+
+                    qrImage.src = qrImageSource;
+                    qrImage.alt = "QR Code Bukti Pemilihan";
+
+                    clonedQr.appendChild(qrImage);
+                } else {
+                    clonedQr.textContent = "QR Code tidak tersedia.";
+                }
+            }
+
+            /* =========================================
+               B. DOKUMEN CETAK
+            ========================================= */
+
+            const printDocument = `
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Bukti Pemilihan - Kalentambo</title>
+
+    <style>
+
+        /* =========================================
+           PENGATURAN KERTAS A4
+        ========================================= */
+
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #102a43;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* =========================================
+           CONTAINER UTAMA
+        ========================================= */
+
+        .print-wrapper {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* =========================================
+           KARTU BUKTI PEMILIHAN
+        ========================================= */
+
+        .print-receipt {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+            padding: 22px 24px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #102a43;
+            text-align: center;
+            overflow: hidden;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .print-receipt::before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(
+                90deg,
+                #102a43,
+                #d6ad60
+            );
+        }
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .receipt-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 6px;
+        }
+
+        .receipt-logo {
+            width: 46px;
+            height: 46px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: #102a43;
+            color: #e6c786;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .receipt-header h3 {
+            margin: 0 0 5px;
+            color: #102a43;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .receipt-header strong {
+            color: #526174;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        .receipt-header > span {
+            display: inline-block;
+            margin-top: 11px;
+            padding: 6px 12px;
+            background: #f4f0e7;
+            border-radius: 20px;
+            color: #94723c;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+        }
+
+        /* =========================================
+           PEMBATAS
+        ========================================= */
+
+        .receipt-divider {
+            width: 100%;
+            height: 1px;
+            margin: 16px 0;
+            border: 0;
+            border-top: 1px dashed #cbd5e1;
+        }
+
+        /* =========================================
+           GRID INFORMASI
+        ========================================= */
+
+        .receipt-information {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .receipt-row {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e5eaf0;
+            border-radius: 7px;
+            font-size: 10px;
+        }
+
+        .receipt-row span {
+            color: #718096;
+        }
+
+        .receipt-row strong {
+            color: #102a43;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .receipt-row:first-child strong {
+            color: #269b62;
+        }
+
+        /* =========================================
+           STATUS BERHASIL
+        ========================================= */
+
+        .receipt-success {
+            margin: 18px 0;
+            text-align: center;
+        }
+
+        .receipt-success > div {
+            width: 42px;
+            height: 42px;
+            margin: 0 auto 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #e8f7ef;
+            color: #269b62;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .receipt-success h3 {
+            margin: 7px 0 4px;
+            color: #269b62;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .receipt-success p {
+            margin: 0;
+            color: #718096;
+            font-size: 10px;
+        }
+
+        /* =========================================
+           QR CODE
+        ========================================= */
+
+        .qr-receipt {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 125px;
+            margin: 12px auto 5px;
+        }
+
+        .qr-receipt img {
+            display: block;
+            width: 115px;
+            height: 115px;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+
+        .receipt-qr-label {
+            display: block;
+            margin-top: 5px;
+            color: #718096;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+        }
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        .receipt-footer {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px dashed #cbd5e1;
+            color: #94a3b8;
+            font-size: 8px;
+            font-weight: 700;
+            line-height: 1.7;
+            letter-spacing: 0.6px;
+        }
+
+        /* =========================================
+           PENGATURAN PRINT
+        ========================================= */
+
+        @media print {
+
+            html,
+            body {
+                width: 100%;
+                min-height: 0;
+                margin: 0;
+                padding: 0;
+                background: #ffffff;
+            }
+
+            .print-wrapper {
+                width: 100%;
+                max-width: 380px;
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            .print-receipt {
+                width: 100%;
+                margin: 0 auto;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            .qr-receipt img {
+                width: 115px;
+                height: 115px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <main class="print-wrapper">
+
+        <section class="print-receipt">
+
+            ${clonedReceipt.innerHTML}
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
+            `;
+
+            /* =========================================
+               C. TULIS DOKUMEN CETAK
+            ========================================= */
+
+            printWindow.document.open();
+            printWindow.document.write(printDocument);
+            printWindow.document.close();
+
+            /* =========================================
+               D. TUNGGU GAMBAR SELESAI DIMUAT
+            ========================================= */
+
+            await new Promise(resolve => {
+
+                const checkReady = async () => {
+
+                    if (printWindow.closed) {
+                        resolve();
+                        return;
+                    }
+
+                    if (
+                        printWindow.document.readyState === "complete"
+                    ) {
+
+                        const images = Array.from(
+                            printWindow.document.images
+                        );
+
+                        await Promise.all(
+                            images.map(image => {
+
+                                if (image.complete) {
+                                    return Promise.resolve();
+                                }
+
+                                return new Promise(resolveImage => {
+                                    image.onload = resolveImage;
+                                    image.onerror = resolveImage;
+                                });
+
+                            })
+                        );
+
+                        if (printWindow.document.fonts) {
+                            await printWindow.document.fonts.ready;
+                        }
+
+                        resolve();
+
+                    } else {
+                        setTimeout(checkReady, 100);
+                    }
+
+                };
+
+                checkReady();
+
+            });
+
+            /* =========================================
+               E. JALANKAN PRINT
+            ========================================= */
+
+            if (!printWindow.closed) {
+
+                await new Promise(resolve => {
+                    setTimeout(resolve, 500);
+                });
+
+                printWindow.focus();
+                printWindow.print();
+
+            }
+
+            console.log("[PRINT] Bukti pemilihan siap dicetak.");
+
+        } catch (error) {
+
+            console.error("[PRINT] Gagal mencetak:", error);
+
+            if (!printWindow.closed) {
+                printWindow.close();
+            }
+
+            alert(
+                "Terjadi kesalahan saat menyiapkan bukti cetak. " +
+                "Silakan coba kembali."
+            );
+
+        }
+
     });
+
 }
 
+/* =====================================================
+   END CETAK BUKTI PEMILIHAN
+===================================================== */
+
+
+
 // =====================================================
-// 31. MEMBERSIHKAN KAMERA
+// 29. MEMBERSIHKAN KAMERA
 // =====================================================
 
 window.addEventListener("beforeunload", function() {
@@ -1383,11 +1717,11 @@ window.addEventListener("beforeunload", function() {
 });
 
 // =====================================================
-// 32. INITIALIZE
+// 30. INITIALIZE
 // =====================================================
 
 function initializeVoting() {
-    updateCandidateNames();
+    updateCandidateInformation();
 
     if (candidateButton) {
         candidateButton.disabled = true;
@@ -1401,20 +1735,16 @@ function initializeVoting() {
         submitVoteButton.disabled = false;
     }
 
-    if (confirmNumber) {
-        confirmNumber.textContent = "00";
-    }
-
-    if (confirmName) {
-        confirmName.textContent = "Belum ada pilihan";
-    }
-
     if (finalConfirmNumber) {
-        finalConfirmNumber.textContent = "00";
+        finalConfirmNumber.textContent = "01";
     }
 
     if (finalConfirmName) {
-        finalConfirmName.textContent = "Belum ada pilihan";
+        finalConfirmName.textContent = candidates.name;
+    }
+
+    if (finalConfirmPhoto) {
+        finalConfirmPhoto.src = candidates.photo;
     }
 
     updateVerificationStatus();
