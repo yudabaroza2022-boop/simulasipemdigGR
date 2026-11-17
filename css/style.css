@@ -838,3 +838,520 @@ button {
         font-size: 19px;
     }
 }
+
+
+/* =========================================
+   RESPONSIVE IMPROVEMENT
+   PILKADES DIGITAL KALENTAMBO
+========================================= */
+
+/* Mencegah horizontal overflow */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* =========================================
+   TABLET - 768px sampai 1024px
+========================================= */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+
+    .nav-container {
+        min-height: 75px;
+        padding: 12px 24px;
+        gap: 15px;
+    }
+
+    .brand-text span {
+        letter-spacing: 0.5px;
+    }
+
+    .hero {
+        padding: 65px 30px 85px;
+    }
+
+    .hero-container {
+        grid-template-columns: 1fr 0.85fr;
+        gap: 30px;
+    }
+
+    .hero-content {
+        text-align: left;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(32px, 4vw, 45px);
+        letter-spacing: -1.5px;
+    }
+
+    .hero-content > p {
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .hero-label {
+        font-size: 9px;
+        letter-spacing: 0.7px;
+    }
+
+    .hero-info {
+        gap: 20px;
+    }
+
+    .hero-visual {
+        padding: 10px;
+    }
+
+    .visual-card {
+        padding: 22px;
+    }
+
+    .candidate-photo {
+        width: 170px;
+        height: 195px;
+    }
+
+    .floating-card {
+        left: -5px;
+        bottom: -20px;
+        padding: 12px 15px;
+    }
+
+    .floating-card strong {
+        font-size: 11px;
+    }
+
+    .floating-card small {
+        font-size: 9px;
+    }
+
+    .footer-container {
+        gap: 20px;
+    }
+}
+
+
+/* =========================================
+   TABLET PORTRAIT & MOBILE
+   Maksimal 768px
+========================================= */
+
+@media (max-width: 768px) {
+
+    .nav-container {
+        min-height: auto;
+        padding: 15px 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .brand {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .brand-logo {
+        flex-shrink: 0;
+    }
+
+    .brand-text {
+        min-width: 0;
+    }
+
+    .brand-text h3 {
+        font-size: 12px;
+    }
+
+    .brand-text span {
+        font-size: 8px;
+        letter-spacing: 0.4px;
+    }
+
+    .nav-menu {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+    }
+
+    .nav-button {
+        padding: 10px 15px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .hero {
+        padding: 60px 22px 75px;
+    }
+
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 45px;
+        width: 100%;
+    }
+
+    .hero-content {
+        text-align: center;
+    }
+
+    .hero-content h1 {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: clamp(34px, 6vw, 46px);
+        letter-spacing: -1.5px;
+    }
+
+    .hero-content > p {
+        max-width: 550px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 14px;
+    }
+
+    .hero-label {
+        font-size: 9px;
+        letter-spacing: 0.7px;
+    }
+
+    .hero-actions {
+        justify-content: center;
+    }
+
+    .hero-info {
+        justify-content: center;
+        gap: 30px;
+        margin-top: 35px;
+    }
+
+    .hero-visual {
+        width: 100%;
+        max-width: 470px;
+        margin: 0 auto;
+        padding: 5px 5px 30px;
+    }
+
+    .visual-card {
+        max-width: 100%;
+        animation: none;
+    }
+
+    .floating-card {
+        left: 0;
+        bottom: 0;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-right {
+        text-align: center;
+    }
+}
+
+
+/* =========================================
+   MOBILE - Maksimal 600px
+========================================= */
+
+@media (max-width: 600px) {
+
+    .nav-container {
+        padding: 13px 16px;
+        gap: 10px;
+    }
+
+    .brand-logo {
+        width: 38px;
+        height: 38px;
+        font-size: 21px;
+        border-radius: 10px;
+    }
+
+    .brand-text h3 {
+        font-size: 10px;
+        letter-spacing: 0.3px;
+    }
+
+    .brand-text span {
+        font-size: 7px;
+        letter-spacing: 0.2px;
+    }
+
+    .nav-button {
+        padding: 9px 12px;
+        font-size: 10px;
+        border-radius: 7px;
+    }
+
+    .nav-menu {
+        gap: 15px;
+    }
+
+    .nav-menu a {
+        font-size: 11px;
+    }
+
+    .hero {
+        padding: 48px 18px 65px;
+    }
+
+    .hero-container {
+        gap: 38px;
+    }
+
+    .hero-label {
+        padding: 8px 11px;
+        font-size: 8px;
+        letter-spacing: 0.4px;
+        margin-bottom: 20px;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(30px, 8vw, 38px);
+        line-height: 1.18;
+        letter-spacing: -1.2px;
+        margin-bottom: 18px;
+    }
+
+    .hero-content > p {
+        font-size: 12px;
+        line-height: 1.8;
+        margin-bottom: 25px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        max-width: 260px;
+        padding: 13px 18px;
+        font-size: 12px;
+    }
+
+    .hero-info {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 32px;
+        padding-top: 20px;
+    }
+
+    .info-item {
+        min-width: 0;
+        text-align: center;
+    }
+
+    .info-item strong {
+        font-size: 15px;
+    }
+
+    .info-item span {
+        font-size: 9px;
+        line-height: 1.4;
+    }
+
+    .hero-visual {
+        max-width: 380px;
+        padding: 0 0 35px;
+    }
+
+    .visual-card {
+        padding: 18px;
+        border-radius: 15px;
+    }
+
+    .visual-header {
+        padding-bottom: 15px;
+    }
+
+    .visual-header h3 {
+        font-size: 14px;
+    }
+
+    .small-label {
+        font-size: 8px;
+    }
+
+    .visual-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .voting-illustration {
+        padding: 25px 5px;
+    }
+
+    .candidate-photo {
+        width: 155px;
+        height: 180px;
+        margin: 5px auto 15px;
+        border-width: 3px;
+        border-radius: 14px;
+    }
+
+    .candidate-badge {
+        font-size: 8px;
+        padding: 7px 10px;
+        letter-spacing: 0.4px;
+    }
+
+    .voting-illustration h2 {
+        font-size: 18px;
+        line-height: 1.4;
+    }
+
+    .voting-illustration p {
+        font-size: 11px;
+    }
+
+    .visual-footer {
+        padding-top: 14px;
+        font-size: 8px;
+        letter-spacing: 0.3px;
+    }
+
+    .floating-card {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+        width: max-content;
+        max-width: 95%;
+        padding: 10px 14px;
+        gap: 9px;
+    }
+
+    .floating-card strong {
+        font-size: 10px;
+    }
+
+    .floating-card small {
+        font-size: 9px;
+    }
+
+    .floating-icon {
+        font-size: 21px;
+    }
+
+    .footer {
+        padding: 28px 18px;
+    }
+
+    .footer-container h3 {
+        font-size: 11px;
+    }
+
+    .footer-container p {
+        font-size: 10px;
+    }
+
+    .footer-right {
+        font-size: 10px;
+        line-height: 1.8;
+    }
+
+    .footer-right span {
+        font-size: 8px;
+    }
+}
+
+
+/* =========================================
+   SMALL MOBILE - Maksimal 380px
+========================================= */
+
+@media (max-width: 380px) {
+
+    .nav-container {
+        padding: 12px;
+    }
+
+    .brand {
+        gap: 7px;
+    }
+
+    .brand-text h3 {
+        font-size: 9px;
+    }
+
+    .brand-text span {
+        font-size: 6px;
+    }
+
+    .nav-button {
+        padding: 8px 9px;
+        font-size: 9px;
+    }
+
+    .hero {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .hero-content h1 {
+        font-size: 29px;
+    }
+
+    .hero-label {
+        font-size: 7px;
+    }
+
+    .hero-info {
+        gap: 5px;
+    }
+
+    .info-item strong {
+        font-size: 13px;
+    }
+
+    .info-item span {
+        font-size: 8px;
+    }
+
+    .visual-card {
+        padding: 14px;
+    }
+
+    .candidate-photo {
+        width: 140px;
+        height: 165px;
+    }
+
+    .voting-illustration h2 {
+        font-size: 16px;
+    }
+
+    .visual-footer {
+        font-size: 7px;
+    }
+}
+
+
+/* =========================================
+   REDUCE MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+}
