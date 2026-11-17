@@ -1,1357 +1,982 @@
 
-/* =====================================
+/* =====================================================
    PILKADES DIGITAL KALENTAMBO
-   MAIN STYLESHEET
-===================================== */
+   MODERN MINIMALIST HOMEPAGE
+===================================================== */
 
-/* RESET */
-* {
+.home-page {
+    --navy: #101f38;
+    --navy-light: #1b3151;
+    --gold: #d9b66f;
+    --white: #ffffff;
+    --muted: #a9b5c6;
+    --text: #18263b;
+
     margin: 0;
     padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--white);
+}
+
+.home-page *,
+.home-page *::before,
+.home-page *::after {
     box-sizing: border-box;
 }
 
-:root {
-    --navy: #102a43;
-    --navy-dark: #091c30;
-    --blue: #1d4e89;
-    --gold: #d6ad60;
-    --gold-light: #f5e6c8;
-    --white: #ffffff;
-    --background: #f5f7fa;
-    --text: #243447;
-    --muted: #718096;
-    --border: #e5eaf0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    background: var(--background);
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: hidden;
-}
-
-a {
-    text-decoration: none;
+.home-page a {
     color: inherit;
+    text-decoration: none;
 }
 
-button {
+.home-page button {
     font-family: inherit;
 }
 
+/* ================= NAVBAR ================= */
 
-/* =====================================
-   NAVBAR
-===================================== */
-
-.navbar {
-    width: 100%;
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
+.home-navbar {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
+    background: rgba(255,255,255,.94);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid #edf0f4;
 }
 
-.nav-container {
-    max-width: 1200px;
-    min-height: 82px;
+.home-nav-container {
+    width: min(1200px, calc(100% - 64px));
+    min-height: 76px;
     margin: auto;
-    padding: 0 25px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 25px;
 }
 
-.brand {
+.home-brand {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.brand-logo {
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
-
-    background: var(--navy);
-    color: var(--gold);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 25px;
-    font-weight: 800;
-}
-
-.brand-text h3 {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--navy);
-    letter-spacing: 0.5px;
-}
-
-.brand-text span {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1.5px;
-    font-weight: 600;
-}
-
-.nav-menu {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-}
-
-.nav-menu a {
-    color: #66778a;
-    font-size: 13px;
-    font-weight: 600;
-    transition: 0.3s;
-}
-
-.nav-menu a:hover,
-.nav-menu a.active {
-    color: var(--navy);
-}
-
-.nav-button {
-    background: var(--navy);
-    color: white;
-
-    padding: 12px 22px;
-    border-radius: 8px;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    transition: 0.3s;
-}
-
-.nav-button:hover {
-    background: var(--blue);
-    transform: translateY(-2px);
-}
-
-
-/* =====================================
-   HERO SECTION
-===================================== */
-
-.hero {
-    background:
-        radial-gradient(
-            circle at 85% 20%,
-            rgba(214, 173, 96, 0.13),
-            transparent 30%
-        ),
-        linear-gradient(
-            135deg,
-            #102a43,
-            #163e63
-        );
-
-    color: white;
-    padding: 95px 25px 105px;
-    overflow: hidden;
-}
-
-.hero-container {
-    max-width: 1200px;
-    margin: auto;
-
+.home-brand-logo {
+    width: 43px;
+    height: 43px;
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: center;
-    gap: 70px;
-}
-
-.hero-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-
-    padding: 9px 15px;
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 30px;
-
-    font-size: 10px;
-    letter-spacing: 1.2px;
-    font-weight: 700;
-
-    color: #f5e6c8;
-    background: rgba(255,255,255,0.06);
-
-    margin-bottom: 25px;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    background: #65d69b;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #65d69b;
-}
-
-.hero-content h1 {
-    font-size: clamp(36px, 5vw, 57px);
-    line-height: 1.15;
-    font-weight: 800;
-    letter-spacing: -2px;
-
-    max-width: 650px;
-    margin-bottom: 25px;
-}
-
-.hero-content h1 span {
+    place-items: center;
+    border-radius: 12px;
+    background: var(--navy);
     color: var(--gold);
+    font-size: 23px;
+    font-weight: 900;
+    box-shadow: 0 5px 15px rgba(16,31,56,.15);
 }
 
-.hero-content > p {
-    max-width: 550px;
-    color: #d3dce6;
-    font-size: 15px;
-    line-height: 1.9;
-    margin-bottom: 32px;
-}
-
-.hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-}
-
-.btn-primary,
-.btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-
-    padding: 15px 23px;
-    border-radius: 8px;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    transition: 0.3s;
-}
-
-.btn-primary {
-    background: var(--gold);
-    color: var(--navy-dark);
-}
-
-.btn-primary:hover {
-    background: #ebc77e;
-    transform: translateY(-3px);
-}
-
-.btn-primary span {
-    font-size: 20px;
-}
-
-.btn-secondary {
-    color: white;
-    border: 1px solid rgba(255,255,255,0.35);
-}
-
-.btn-secondary:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-.hero-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-
-    margin-top: 55px;
-    padding-top: 25px;
-
-    border-top: 1px solid rgba(255,255,255,0.16);
-}
-
-.info-item {
+.home-brand-text {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.info-item strong {
-    color: var(--gold);
-    font-size: 19px;
-    font-weight: 800;
-}
-
-.info-item span {
-    font-size: 11px;
-    color: #c4d0dc;
-}
-
-
-/* =====================================
-   HERO VISUAL
-===================================== */
-
-.hero-visual {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.visual-card {
-    width: 100%;
-    max-width: 430px;
-
-    background: white;
+.home-brand-text strong {
     color: var(--navy);
-
-    border-radius: 18px;
-    padding: 28px;
-
-    box-shadow: 0 25px 70px rgba(0,0,0,0.25);
-
-    animation: floatCard 5s ease-in-out infinite;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .5px;
 }
 
-.visual-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
+.home-brand-text strong span {
+    color: #b58c43;
+    margin-left: 3px;
 }
 
-.small-label {
+.home-brand-text small {
+    color: #8290a3;
     font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 1.5px;
     font-weight: 700;
+    letter-spacing: 1.8px;
 }
 
-.visual-header h3 {
-    font-size: 17px;
-    margin-top: 5px;
-}
-
-.visual-icon {
-    width: 38px;
-    height: 38px;
-
-    border-radius: 50%;
-    background: #e8f6ef;
-    color: #269b62;
-
+.home-nav-menu {
     display: flex;
     align-items: center;
-    justify-content: center;
-
-    font-size: 20px;
-    font-weight: 800;
+    gap: 30px;
 }
 
-.voting-illustration {
-    text-align: center;
-    padding: 45px 10px;
-}
-
-.vote-circle {
-    width: 125px;
-    height: 125px;
-
-    margin: auto auto 25px;
-
-    border-radius: 50%;
-    border: 2px solid #e5d2ad;
-    background: #fbf7ef;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.vote-check {
-    width: 78px;
-    height: 78px;
-
-    border-radius: 50%;
-    background: var(--navy);
-    color: var(--gold);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 42px;
-    font-weight: 800;
-}
-
-.voting-illustration h2 {
-    font-size: 19px;
-    margin-bottom: 8px;
-}
-
-.voting-illustration p {
+.home-nav-menu a {
+    position: relative;
+    color: #68758a;
     font-size: 12px;
-    color: var(--muted);
+    font-weight: 600;
+    transition: .2s;
 }
 
-.visual-footer {
-    border-top: 1px solid var(--border);
-    padding-top: 18px;
-
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-
-    font-size: 9px;
-    letter-spacing: 0.8px;
-    font-weight: 700;
-    color: var(--muted);
+.home-nav-menu a:hover,
+.home-nav-menu a.active {
+    color: var(--navy);
 }
 
-.floating-card {
+.home-nav-menu a.active::after {
+    content: "";
     position: absolute;
-    bottom: -15px;
-    left: -10px;
+    left: 50%;
+    bottom: -10px;
+    width: 18px;
+    height: 2px;
+    transform: translateX(-50%);
+    border-radius: 5px;
+    background: var(--gold);
+}
 
+.home-nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 13px 19px;
+    border-radius: 9px;
+    background: var(--navy);
+    color: white !important;
+    font-size: 11px;
+    font-weight: 700;
+    transition: .25s;
+}
+
+.home-nav-button:hover {
+    background: #294365;
+    transform: translateY(-2px);
+}
+
+/* ================= HERO ================= */
+
+.home-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 75px 0 0;
+    color: white;
+    background:
+        radial-gradient(ellipse at 88% 25%, rgba(74,105,143,.25), transparent 35%),
+        linear-gradient(120deg, #0c1a31, #142b49);
+}
+
+.home-hero-container {
+    position: relative;
+    z-index: 2;
+    width: min(1200px, calc(100% - 64px));
+    min-height: 470px;
+    margin: auto;
+    padding-bottom: 55px;
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    align-items: center;
+    gap: 70px;
+}
+
+.home-hero-decoration {
+    position: absolute;
+    z-index: -1;
+    border: 1px solid rgba(255,255,255,.045);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.home-decoration-one {
+    width: 520px;
+    height: 520px;
+    top: -260px;
+    right: -100px;
+}
+
+.home-decoration-two {
+    width: 370px;
+    height: 370px;
+    top: -185px;
+    right: -25px;
+}
+
+.home-hero-content {
+    max-width: 590px;
+}
+
+.home-eyebrow {
     display: flex;
     align-items: center;
     gap: 12px;
-
-    background: white;
-    color: var(--navy);
-
-    padding: 15px 20px;
-    border-radius: 12px;
-
-    box-shadow: 0 12px 35px rgba(0,0,0,0.16);
-}
-
-.floating-icon {
+    margin-bottom: 24px;
     color: var(--gold);
-    font-size: 26px;
-}
-
-.floating-card strong,
-.floating-card small {
-    display: block;
-}
-
-.floating-card strong {
-    font-size: 12px;
-}
-
-.floating-card small {
     font-size: 10px;
-    color: var(--muted);
-}
-
-
-/* =====================================
-   INFORMATION SECTION
-===================================== */
-
-.information {
-    max-width: 1200px;
-    margin: auto;
-    padding: 90px 25px;
-}
-
-.section-heading {
-    text-align: center;
-    margin-bottom: 45px;
-}
-
-.section-label {
-    color: #b18b4e;
-    font-size: 11px;
     font-weight: 800;
     letter-spacing: 2px;
 }
 
-.section-heading h2 {
-    color: var(--navy);
-    font-size: 32px;
+.home-live-dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #56d49b;
+    box-shadow: 0 0 0 5px rgba(86,212,155,.12);
+}
+
+.home-eyebrow-line {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    opacity: .6;
+}
+
+.home-hero-content h1 {
+    margin: 0;
+    color: white;
+    font-size: clamp(42px, 5vw, 66px);
+    line-height: 1.12;
+    letter-spacing: -2.8px;
     font-weight: 800;
-    margin: 12px 0;
-    letter-spacing: -1px;
 }
 
-.section-heading p {
-    color: var(--muted);
+.home-hero-content h1 span {
+    color: var(--gold);
+}
+
+.home-hero-description {
+    max-width: 490px;
+    margin: 24px 0 28px;
+    color: #c0cada;
     font-size: 14px;
+    line-height: 1.9;
 }
 
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-}
-
-.feature-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-
-    padding: 30px;
-
-    transition: 0.3s;
-}
-
-.feature-card:hover {
-    transform: translateY(-7px);
-    box-shadow: 0 15px 35px rgba(16,42,67,0.09);
-    border-color: #d6ad60;
-}
-
-.feature-icon {
-    width: 48px;
-    height: 48px;
-
-    border-radius: 12px;
-    background: #f5eee1;
-    color: #a57c37;
-
+.home-hero-actions {
     display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-primary-button {
+    min-height: 49px;
+    padding: 0 22px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    font-weight: 800;
-    font-size: 16px;
-
-    margin-bottom: 22px;
-}
-
-.feature-card h3 {
-    color: var(--navy);
-    font-size: 17px;
-    margin-bottom: 12px;
-}
-
-.feature-card p {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.8;
-    margin-bottom: 22px;
-}
-
-.feature-card a {
-    color: var(--blue);
+    gap: 17px;
+    border-radius: 8px;
+    background: var(--gold);
+    color: #17243a !important;
     font-size: 12px;
     font-weight: 800;
+    transition: .25s;
 }
 
-.feature-card a:hover {
+.home-primary-button:hover {
+    background: #edce91;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(217,182,111,.18);
+}
+
+.home-trust-note {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 27px;
+    color: #aebbd0;
+    font-size: 10px;
+    letter-spacing: .3px;
+}
+
+.home-trust-note i {
     color: var(--gold);
 }
 
+/* ================= CANDIDATE VISUAL ================= */
 
-/* =====================================
-   FOOTER
-===================================== */
-
-.footer {
-    background: var(--navy-dark);
-    color: white;
-    padding: 35px 25px;
+.home-hero-visual {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
+    justify-self: center;
+    padding: 10px 15px 42px;
 }
 
-.footer-container {
-    max-width: 1200px;
-    margin: auto;
+.home-visual-glow {
+    position: absolute;
+    width: 290px;
+    height: 290px;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    background: rgba(217,182,111,.16);
+    filter: blur(75px);
+}
 
+.home-candidate-card {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 16px;
+    background: white;
+    color: var(--text);
+    box-shadow: 0 25px 65px rgba(0,0,0,.28);
+    transition: .3s;
+}
+
+.home-candidate-card:hover {
+    transform: translateY(-5px);
+}
+
+.home-card-top {
+    min-height: 72px;
+    padding: 15px 19px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 25px;
+    justify-content: space-between;
 }
 
-.footer-container h3 {
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
+.home-card-overline {
+    color: #a58a58;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
 }
 
-.footer-container p {
-    color: #aab8c6;
-    font-size: 11px;
+.home-card-top h3 {
+    margin: 6px 0 0;
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 800;
 }
 
-.footer-right {
-    text-align: right;
-    color: #cbd5df;
-    font-size: 11px;
+.home-card-symbol {
+    width: 37px;
+    height: 37px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #f6f2e9;
+    color: #a58a58;
 }
 
-.footer-right span {
+.home-candidate-image {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+    background: #dce5ed;
+}
+
+.home-candidate-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+}
+
+.home-image-overlay {
+    position: absolute;
+    inset: 50% 0 0;
+    background: linear-gradient(transparent, rgba(9,24,45,.55));
+}
+
+.home-candidate-number {
+    position: absolute;
+    right: 17px;
+    bottom: 17px;
+    width: 58px;
+    height: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: var(--gold);
+    color: var(--navy);
+}
+
+.home-candidate-number span {
+    font-size: 7px;
+    font-weight: 800;
+}
+
+.home-candidate-number strong {
+    font-size: 27px;
+    line-height: 1.15;
+}
+
+.home-candidate-information {
+    padding: 20px 21px;
+}
+
+.home-candidate-label {
+    color: #a58a58;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.home-candidate-information h2 {
+    margin: 8px 0;
+    color: var(--navy);
+    font-size: 19px;
+    line-height: 1.35;
+    letter-spacing: -.4px;
+}
+
+.home-candidate-information p {
+    margin: 0;
+    color: #8290a2;
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.home-card-bottom {
+    min-height: 42px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid #edf0f4;
+    color: #8793a4;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .6px;
+}
+
+.home-floating-info {
+    position: absolute;
+    z-index: 4;
+    left: -8px;
+    bottom: 25px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #edf0f4;
+    border-radius: 12px;
+    background: white;
+    color: var(--navy);
+    box-shadow: 0 12px 30px rgba(0,0,0,.16);
+}
+
+.home-floating-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #e7f6ed;
+    color: #23965b;
+}
+
+.home-floating-info strong,
+.home-floating-info span {
+    display: block;
+}
+
+.home-floating-info strong {
+    font-size: 10px;
+}
+
+.home-floating-info span {
+    margin-top: 4px;
+    color: #8995a5;
+    font-size: 9px;
+}
+
+.home-visual-caption {
+    position: absolute;
+    right: 18px;
+    bottom: 3px;
+    display: flex;
+    gap: 12px;
+    color: #aebdd0;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* ================= STATS ================= */
+
+.home-stats-container {
+    position: relative;
+    z-index: 3;
+    width: min(1200px, calc(100% - 64px));
+    min-height: 100px;
+    margin: auto;
+    padding: 19px 0;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    border-top: 1px solid rgba(255,255,255,.13);
+}
+
+.home-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-stat-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(217,182,111,.28);
+    border-radius: 10px;
+    background: rgba(217,182,111,.07);
+    color: var(--gold);
+}
+
+.home-stat-item strong,
+.home-stat-item span {
+    display: block;
+}
+
+.home-stat-item strong {
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.home-stat-item span {
+    margin-top: 4px;
+    color: #aebbd0;
+    font-size: 10px;
+}
+
+.home-stat-divider {
+    width: 1px;
+    height: 34px;
+    background: rgba(255,255,255,.15);
+}
+
+.home-stat-note {
+    margin-left: auto;
     color: var(--gold);
     font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .7px;
+}
+
+/* ================= FOOTER ================= */
+
+.home-footer {
+    padding: 28px 0 20px;
+    background: #ffffff;
+    color: var(--text);
+}
+
+.home-footer-container {
+    width: min(1200px, calc(100% - 64px));
+    margin: auto;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 35px;
+    row-gap: 20px;
+}
+
+.home-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-footer-brand > div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.home-footer-brand strong {
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .4px;
+}
+
+.home-footer-brand span {
+    color: #8290a3;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.3px;
 }
 
-
-/* =====================================
-   ANIMATION
-===================================== */
-
-@keyframes floatCard {
-    0%, 100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
+.home-footer-container > p {
+    justify-self: end;
+    margin: 0;
+    color: #7d8999;
+    font-size: 11px;
 }
 
+.home-footer-bottom {
+    grid-column: 1 / -1;
+    min-height: 43px;
+    padding-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    border-top: 1px solid #edf0f3;
+    color: #8994a3;
+    font-size: 10px;
+}
 
-/* =====================================
-   RESPONSIVE TABLET
-===================================== */
+.home-footer-bottom span:last-child {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.home-footer-bottom i {
+    color: #b58c43;
+}
+
+/* ================= TABLET ================= */
 
 @media (max-width: 900px) {
 
-    .nav-container {
-        flex-wrap: wrap;
-        padding: 15px 20px;
+    .home-hero-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
     }
 
-    .hero-container {
-        grid-template-columns: 1fr;
-        gap: 55px;
+    .home-hero-content h1 {
+        font-size: clamp(38px, 5.5vw, 54px);
     }
 
-    .hero-content {
-        text-align: center;
+    .home-hero-visual {
+        max-width: 390px;
     }
 
-    .hero-content > p {
-        margin-left: auto;
-        margin-right: auto;
+    .home-candidate-image {
+        height: 245px;
     }
 
-    .hero-actions,
-    .hero-info {
-        justify-content: center;
+    .home-floating-info {
+        left: -5px;
     }
-
-    .hero-label {
-        justify-content: center;
-    }
-
-    .hero-visual {
-        max-width: 550px;
-        width: 100%;
-        margin: auto;
-    }
-
-    .feature-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
 }
 
+/* ================= MOBILE ================= */
 
-/* =====================================
-   RESPONSIVE MOBILE
-===================================== */
+@media (max-width: 680px) {
 
-@media (max-width: 600px) {
-
-    .nav-container {
-        gap: 15px;
-    }
-
-    .brand-logo {
-        width: 39px;
-        height: 39px;
-    }
-
-    .brand-text h3 {
-        font-size: 11px;
-    }
-
-    .brand-text span {
-        font-size: 9px;
-    }
-
-    .nav-menu {
-        order: 3;
-        width: 100%;
-
-        justify-content: space-between;
+    .home-nav-container {
+        width: calc(100% - 36px);
+        min-height: 68px;
         gap: 10px;
     }
 
-    .nav-menu a {
+    .home-brand {
+        gap: 9px;
+    }
+
+    .home-brand-logo {
+        width: 38px;
+        height: 38px;
+        font-size: 20px;
+    }
+
+    .home-brand-text strong {
         font-size: 10px;
     }
 
-    .nav-button {
-        padding: 10px 13px;
+    .home-brand-text small {
+        font-size: 7px;
+        letter-spacing: 1.3px;
+    }
+
+    .home-nav-menu {
+        display: none;
+    }
+
+    .home-nav-button {
+        padding: 11px 13px;
         font-size: 10px;
+        gap: 7px;
     }
 
-    .hero {
-        padding: 65px 20px 80px;
+    .home-hero {
+        padding-top: 55px;
     }
 
-    .hero-content h1 {
-        font-size: 37px;
-        letter-spacing: -1.5px;
-    }
-
-    .hero-content > p {
-        font-size: 13px;
-    }
-
-    .hero-info {
-        gap: 22px;
-    }
-
-    .info-item strong {
-        font-size: 16px;
-    }
-
-    .info-item span {
-        font-size: 9px;
-    }
-
-    .visual-card {
-        padding: 20px;
-    }
-
-    .floating-card {
-        left: 0;
-        bottom: -30px;
-        padding: 12px;
-    }
-
-    .information {
-        padding: 70px 20px;
-    }
-
-    .section-heading h2 {
-        font-size: 25px;
-    }
-
-    .feature-grid {
+    .home-hero-container {
+        width: calc(100% - 40px);
+        min-height: auto;
+        padding-bottom: 35px;
         grid-template-columns: 1fr;
+        gap: 40px;
     }
 
-    .feature-card {
-        padding: 25px;
-    }
-
-    .footer-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .footer-right {
+    .home-hero-content {
         text-align: left;
     }
 
+    .home-eyebrow {
+        margin-bottom: 20px;
+        font-size: 9px;
+        letter-spacing: 1.5px;
+    }
+
+    .home-hero-content h1 {
+        font-size: clamp(38px, 10vw, 51px);
+        line-height: 1.12;
+        letter-spacing: -1.8px;
+    }
+
+    .home-hero-description {
+        margin: 18px 0 23px;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .home-primary-button {
+        min-height: 47px;
+        padding: 0 18px;
+        font-size: 11px;
+    }
+
+    .home-trust-note {
+        margin-top: 20px;
+        font-size: 9px;
+    }
+
+    .home-hero-visual {
+        width: min(100%, 380px);
+        padding: 0 12px 43px;
+    }
+
+    .home-candidate-image {
+        height: 250px;
+    }
+
+    .home-candidate-information h2 {
+        font-size: 17px;
+    }
+
+    .home-floating-info {
+        left: 0;
+        bottom: 25px;
+        padding: 10px 12px;
+    }
+
+    .home-visual-caption {
+        right: 12px;
+        bottom: 5px;
+        font-size: 7px;
+    }
+
+    .home-stats-container {
+        width: calc(100% - 40px);
+        min-height: auto;
+        padding: 20px 0;
+        flex-wrap: wrap;
+        gap: 18px;
+    }
+
+    .home-stat-item {
+        flex: 1 1 35%;
+        gap: 9px;
+    }
+
+    .home-stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+    }
+
+    .home-stat-item strong {
+        font-size: 13px;
+    }
+
+    .home-stat-item span {
+        font-size: 9px;
+    }
+
+    .home-stat-divider {
+        display: none;
+    }
+
+    .home-stat-note {
+        width: 100%;
+        margin: 4px 0 0;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255,255,255,.13);
+        font-size: 8px;
+    }
+
+    .home-footer {
+        padding: 25px 0 17px;
+    }
+
+    .home-footer-container {
+        width: calc(100% - 40px);
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .home-footer-container > p {
+        justify-self: start;
+        font-size: 10px;
+        line-height: 1.7;
+    }
+
+    .home-footer-bottom {
+        grid-column: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        font-size: 9px;
+    }
 }
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 380px) {
+
+    .home-brand-text strong {
+        font-size: 9px;
+    }
+
+    .home-nav-button {
+        padding: 10px;
+        font-size: 9px;
+    }
+
+    .home-hero-content h1 {
+        font-size: 36px;
+    }
+
+    .home-candidate-image {
+        height: 220px;
+    }
+
+    .home-card-bottom {
+        font-size: 7px;
+        padding: 0 12px;
+    }
+
+    .home-floating-info {
+        padding: 8px 10px;
+    }
+}
+
+/* ================= ACCESSIBILITY ================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .home-page *,
+    .home-page *::before,
+    .home-page *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+
 
 /* =========================================
-   HERO - FOTO CALON KEPALA DESA
+   FINAL REFINEMENT - CANDIDATE CARD
 ========================================= */
 
-.candidate-photo {
-    width: 190px;
-    height: 220px;
-    margin: 15px auto 18px;
+/* Foto kandidat: framing lebih lega */
+.home-candidate-image {
+    height: 330px;
     overflow: hidden;
-    border-radius: 18px;
-    border: 4px solid #e6c786;
-    background: #f1f5f9;
-    box-shadow: 0 12px 30px rgba(16, 42, 67, 0.15);
+    background: #9bcfe0;
 }
 
-.candidate-photo img {
+.home-candidate-image img {
     width: 100%;
     height: 100%;
     display: block;
     object-fit: cover;
-    object-position: center top;
+    object-position: center 25%;
 }
 
-.candidate-badge {
-    display: inline-block;
-    padding: 7px 13px;
-    margin-bottom: 10px;
-    border-radius: 30px;
-    background: #f4f0e7;
-    color: #94723c;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
+/* Hilangkan kartu Demokrasi Digital */
+.home-floating-info {
+    display: none !important;
 }
 
-.voting-illustration h2 {
-    font-size: 22px;
-    font-weight: 800;
-    margin: 5px 0 8px;
-    color: #102a43;
+/* Rapikan jarak bagian bawah kartu */
+.home-hero-visual {
+    padding-bottom: 30px;
 }
 
-.voting-illustration p {
-    line-height: 1.6;
+/* Caption foto */
+.home-visual-caption {
+    bottom: 5px;
 }
 
-.visual-icon {
+/* Tablet */
+@media (max-width: 900px) {
+    .home-candidate-image {
+        height: 310px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 680px) {
+    .home-candidate-image {
+        height: 300px;
+    }
+
+    .home-hero-visual {
+        padding-bottom: 30px;
+    }
+}
+
+/* HP kecil */
+@media (max-width: 380px) {
+    .home-candidate-image {
+        height: 270px;
+    }
+}
+
+
+/* FOTO KANDIDAT - TAMPIL UTUH TANPA CROP */
+
+.home-candidate-image {
+    height: 330px;
+    background: #9bcfe0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: #102a43;
-    color: #e6c786;
-    font-weight: 800;
-    font-size: 17px;
+    overflow: hidden;
 }
 
-@media (max-width: 480px) {
-    .candidate-photo {
-        width: 165px;
-        height: 195px;
-    }
-
-    .voting-illustration h2 {
-        font-size: 19px;
-    }
-}
-
-
-/* =========================================
-   RESPONSIVE IMPROVEMENT
-   PILKADES DIGITAL KALENTAMBO
-========================================= */
-
-/* Mencegah horizontal overflow */
-html,
-body {
+.home-candidate-image img {
     width: 100%;
-    max-width: 100%;
-    overflow-x: clip;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
 }
 
-img {
-    max-width: 100%;
+/* Hilangkan kartu yang mengganggu */
+.home-floating-info {
+    display: none !important;
 }
 
-/* =========================================
-   TABLET - 768px sampai 1024px
-========================================= */
-
-@media (min-width: 601px) and (max-width: 1024px) {
-
-    .nav-container {
-        min-height: 75px;
-        padding: 12px 24px;
-        gap: 15px;
-    }
-
-    .brand-text span {
-        letter-spacing: 0.5px;
-    }
-
-    .hero {
-        padding: 65px 30px 85px;
-    }
-
-    .hero-container {
-        grid-template-columns: 1fr 0.85fr;
-        gap: 30px;
-    }
-
-    .hero-content {
-        text-align: left;
-    }
-
-    .hero-content h1 {
-        font-size: clamp(32px, 4vw, 45px);
-        letter-spacing: -1.5px;
-    }
-
-    .hero-content > p {
-        font-size: 13px;
-        line-height: 1.8;
-    }
-
-    .hero-label {
-        font-size: 9px;
-        letter-spacing: 0.7px;
-    }
-
-    .hero-info {
-        gap: 20px;
-    }
-
-    .hero-visual {
-        padding: 10px;
-    }
-
-    .visual-card {
-        padding: 22px;
-    }
-
-    .candidate-photo {
-        width: 170px;
-        height: 195px;
-    }
-
-    .floating-card {
-        left: -5px;
-        bottom: -20px;
-        padding: 12px 15px;
-    }
-
-    .floating-card strong {
-        font-size: 11px;
-    }
-
-    .floating-card small {
-        font-size: 9px;
-    }
-
-    .footer-container {
-        gap: 20px;
+/* Responsif */
+@media (max-width: 680px) {
+    .home-candidate-image {
+        height: 340px;
     }
 }
-
-
-/* =========================================
-   TABLET PORTRAIT & MOBILE
-   Maksimal 768px
-========================================= */
-
-@media (max-width: 768px) {
-
-    .nav-container {
-        min-height: auto;
-        padding: 15px 20px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .brand {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .brand-logo {
-        flex-shrink: 0;
-    }
-
-    .brand-text {
-        min-width: 0;
-    }
-
-    .brand-text h3 {
-        font-size: 12px;
-    }
-
-    .brand-text span {
-        font-size: 8px;
-        letter-spacing: 0.4px;
-    }
-
-    .nav-menu {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        padding-top: 8px;
-        border-top: 1px solid var(--border);
-    }
-
-    .nav-button {
-        padding: 10px 15px;
-        font-size: 11px;
-        white-space: nowrap;
-    }
-
-    .hero {
-        padding: 60px 22px 75px;
-    }
-
-    .hero-container {
-        grid-template-columns: 1fr;
-        gap: 45px;
-        width: 100%;
-    }
-
-    .hero-content {
-        text-align: center;
-    }
-
-    .hero-content h1 {
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        font-size: clamp(34px, 6vw, 46px);
-        letter-spacing: -1.5px;
-    }
-
-    .hero-content > p {
-        max-width: 550px;
-        margin-left: auto;
-        margin-right: auto;
-        font-size: 14px;
-    }
-
-    .hero-label {
-        font-size: 9px;
-        letter-spacing: 0.7px;
-    }
-
-    .hero-actions {
-        justify-content: center;
-    }
-
-    .hero-info {
-        justify-content: center;
-        gap: 30px;
-        margin-top: 35px;
-    }
-
-    .hero-visual {
-        width: 100%;
-        max-width: 470px;
-        margin: 0 auto;
-        padding: 5px 5px 30px;
-    }
-
-    .visual-card {
-        max-width: 100%;
-        animation: none;
-    }
-
-    .floating-card {
-        left: 0;
-        bottom: 0;
-    }
-
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .footer-right {
-        text-align: center;
-    }
-}
-
-
-/* =========================================
-   MOBILE - Maksimal 600px
-========================================= */
-
-@media (max-width: 600px) {
-
-    .nav-container {
-        padding: 13px 16px;
-        gap: 10px;
-    }
-
-    .brand-logo {
-        width: 38px;
-        height: 38px;
-        font-size: 21px;
-        border-radius: 10px;
-    }
-
-    .brand-text h3 {
-        font-size: 10px;
-        letter-spacing: 0.3px;
-    }
-
-    .brand-text span {
-        font-size: 7px;
-        letter-spacing: 0.2px;
-    }
-
-    .nav-button {
-        padding: 9px 12px;
-        font-size: 10px;
-        border-radius: 7px;
-    }
-
-    .nav-menu {
-        gap: 15px;
-    }
-
-    .nav-menu a {
-        font-size: 11px;
-    }
-
-    .hero {
-        padding: 48px 18px 65px;
-    }
-
-    .hero-container {
-        gap: 38px;
-    }
-
-    .hero-label {
-        padding: 8px 11px;
-        font-size: 8px;
-        letter-spacing: 0.4px;
-        margin-bottom: 20px;
-    }
-
-    .hero-content h1 {
-        font-size: clamp(30px, 8vw, 38px);
-        line-height: 1.18;
-        letter-spacing: -1.2px;
-        margin-bottom: 18px;
-    }
-
-    .hero-content > p {
-        font-size: 12px;
-        line-height: 1.8;
-        margin-bottom: 25px;
-    }
-
-    .btn-primary {
-        width: 100%;
-        max-width: 260px;
-        padding: 13px 18px;
-        font-size: 12px;
-    }
-
-    .hero-info {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 32px;
-        padding-top: 20px;
-    }
-
-    .info-item {
-        min-width: 0;
-        text-align: center;
-    }
-
-    .info-item strong {
-        font-size: 15px;
-    }
-
-    .info-item span {
-        font-size: 9px;
-        line-height: 1.4;
-    }
-
-    .hero-visual {
-        max-width: 380px;
-        padding: 0 0 35px;
-    }
-
-    .visual-card {
-        padding: 18px;
-        border-radius: 15px;
-    }
-
-    .visual-header {
-        padding-bottom: 15px;
-    }
-
-    .visual-header h3 {
-        font-size: 14px;
-    }
-
-    .small-label {
-        font-size: 8px;
-    }
-
-    .visual-icon {
-        width: 34px;
-        height: 34px;
-        font-size: 15px;
-        border-radius: 10px;
-    }
-
-    .voting-illustration {
-        padding: 25px 5px;
-    }
-
-    .candidate-photo {
-        width: 155px;
-        height: 180px;
-        margin: 5px auto 15px;
-        border-width: 3px;
-        border-radius: 14px;
-    }
-
-    .candidate-badge {
-        font-size: 8px;
-        padding: 7px 10px;
-        letter-spacing: 0.4px;
-    }
-
-    .voting-illustration h2 {
-        font-size: 18px;
-        line-height: 1.4;
-    }
-
-    .voting-illustration p {
-        font-size: 11px;
-    }
-
-    .visual-footer {
-        padding-top: 14px;
-        font-size: 8px;
-        letter-spacing: 0.3px;
-    }
-
-    .floating-card {
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 0;
-        width: max-content;
-        max-width: 95%;
-        padding: 10px 14px;
-        gap: 9px;
-    }
-
-    .floating-card strong {
-        font-size: 10px;
-    }
-
-    .floating-card small {
-        font-size: 9px;
-    }
-
-    .floating-icon {
-        font-size: 21px;
-    }
-
-    .footer {
-        padding: 28px 18px;
-    }
-
-    .footer-container h3 {
-        font-size: 11px;
-    }
-
-    .footer-container p {
-        font-size: 10px;
-    }
-
-    .footer-right {
-        font-size: 10px;
-        line-height: 1.8;
-    }
-
-    .footer-right span {
-        font-size: 8px;
-    }
-}
-
-
-/* =========================================
-   SMALL MOBILE - Maksimal 380px
-========================================= */
 
 @media (max-width: 380px) {
-
-    .nav-container {
-        padding: 12px;
+    .home-candidate-image {
+        height: 300px;
     }
-
-    .brand {
-        gap: 7px;
-    }
-
-    .brand-text h3 {
-        font-size: 9px;
-    }
-
-    .brand-text span {
-        font-size: 6px;
-    }
-
-    .nav-button {
-        padding: 8px 9px;
-        font-size: 9px;
-    }
-
-    .hero {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
-
-    .hero-content h1 {
-        font-size: 29px;
-    }
-
-    .hero-label {
-        font-size: 7px;
-    }
-
-    .hero-info {
-        gap: 5px;
-    }
-
-    .info-item strong {
-        font-size: 13px;
-    }
-
-    .info-item span {
-        font-size: 8px;
-    }
-
-    .visual-card {
-        padding: 14px;
-    }
-
-    .candidate-photo {
-        width: 140px;
-        height: 165px;
-    }
-
-    .voting-illustration h2 {
-        font-size: 16px;
-    }
-
-    .visual-footer {
-        font-size: 7px;
-    }
-}
-
-
-/* =========================================
-   REDUCE MOTION
-========================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-
 }
