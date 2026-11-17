@@ -12,6 +12,12 @@
 // 1. KONFIGURASI
 // =====================================================
 
+// =====================================================
+// SUPABASE CONFIGURATION
+// =====================================================
+
+
+
 const STORAGE_KEYS = {
     voters: "klt_used_voters",
     votes: "klt_demo_votes",
@@ -30,6 +36,24 @@ const DEFAULT_CANDIDATES = {
         photo: ""
     }
 };
+
+// =====================================================
+// SUPABASE CONFIGURATION
+// =====================================================
+
+const SUPABASE_URL = "https://quqrevvpxxetezdnpwkh.supabase.co";
+
+const SUPABASE_ANON_KEY = "sb_publishable_QD5vGnkk1ow1WpU_tkvohg_HHKdRUCI";
+
+const supabaseClient = window.supabase
+    ? window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    )
+    : null;
+
+let remoteVotes = [];
+let voteRealtimeChannel = null;
 
 const DEMO_UNIVERSAL_QR = "KLT001";
 
@@ -906,7 +930,19 @@ if (repeatChoiceButton) {
 // 22. SIMPAN SUARA
 // =====================================================
 
-function saveVote() {
+// =====================================================
+// 22. SIMPAN SUARA KE SUPABASE
+// =====================================================
+
+async function saveVote() {
+
+    // Validasi koneksi Supabase
+    if (!supabaseClient) {
+        throw new Error(
+            "Koneksi Supabase belum tersedia. Periksa library CDN."
+        );
+    }
+
     if (!voterCode || ![1, 2].includes(selectedCandidate)) {
         throw new Error("Data simulasi atau kandidat belum lengkap.");
     }
@@ -915,44 +951,32 @@ function saveVote() {
         throw new Error("Verifikasi QR Code belum dilakukan.");
     }
 
-    const votes = readStorage(STORAGE_KEYS.votes, []);
-
-    if (!Array.isArray(votes)) {
-        throw new Error("Format data simulasi tidak valid.");
-    }
-
-    const oldVotes = localStorage.getItem(STORAGE_KEYS.votes);
-
     receiptCode = "KLT-DEMO-" + Date.now().toString().slice(-8);
 
     const newVote = {
-        candidate: selectedCandidate,
-        date: new Date().toISOString(),
-        receipt: receiptCode
+        candidate_number: selectedCandidate,
+        receipt_code: receiptCode
     };
 
-    // Setiap simulasi menambahkan satu suara.
-    // Tidak ada pembatasan penggunaan QR universal.
-    try {
-        writeStorage(
-            STORAGE_KEYS.votes,
-            votes.concat(newVote)
+    const { data, error } = await supabaseClient
+        .from("pilkades_votes")
+        .insert([newVote])
+        .select();
+
+    if (error) {
+        console.error("[SUPABASE] Gagal menyimpan suara:", error);
+        throw new Error(
+            "Suara gagal disimpan ke server. Periksa koneksi internet dan coba kembali."
         );
-
-    } catch (error) {
-        try {
-            if (oldVotes === null) {
-                localStorage.removeItem(STORAGE_KEYS.votes);
-            } else {
-                localStorage.setItem(STORAGE_KEYS.votes, oldVotes);
-            }
-
-        } catch (rollbackError) {
-            console.error("[VOTING] Rollback gagal:", rollbackError);
-        }
-
-        throw error;
     }
+
+    if (!data || data.length === 0) {
+        throw new Error("Server belum mengonfirmasi penyimpanan suara.");
+    }
+
+    console.log("[SUPABASE] Suara berhasil disimpan:", data[0]);
+
+    return data[0];
 }
 
 // =====================================================
@@ -960,7 +984,7 @@ function saveVote() {
 // =====================================================
 
 if (submitVoteButton) {
-    submitVoteButton.addEventListener("click", function() {
+    submitVoteButton.addEventListener("click", async function() {
         if (submitting) return;
 
         if (
@@ -983,10 +1007,10 @@ if (submitVoteButton) {
 
         if (repeatChoiceButton) {
             repeatChoiceButton.disabled = true;
-        }
+        } 
 
         try {
-            saveVote();
+            await saveVote();
 
             if (receiptCodeElement) {
                 receiptCodeElement.textContent = receiptCode;
