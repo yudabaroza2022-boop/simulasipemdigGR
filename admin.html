@@ -9,9 +9,9 @@
     <meta name="description" content="Dashboard administrasi simulasi Pilkades Digital Desa Kalentambo.">
     <meta name="theme-color" content="#102a43">
 
-    <title>Admin - Pilkades Digital Kalentambo</title>
+    <title>Dashboard Admin | Pilkades Digital Kalentambo</title>
 
-    <!-- CSS -->
+    <!-- STYLESHEET -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/admin.css">
 </head>
@@ -36,23 +36,23 @@
             <nav class="nav-menu" aria-label="Navigasi utama">
 
                 <a href="index.html">
-                    ⌂ <span>Beranda</span>
-                </a>
-
-                <a href="panduan.html">
-                    ▤ <span>Panduan</span>
+                    <span aria-hidden="true">⌂</span>
+                    <span>Beranda</span>
                 </a>
 
                 <a href="voting.html">
-                    ☑ <span>e-Voting</span>
+                    <span aria-hidden="true">☑</span>
+                    <span>e-Voting</span>
                 </a>
 
                 <a href="admin.html" class="active" aria-current="page">
-                    ⚙ <span>Admin</span>
+                    <span aria-hidden="true">⚙</span>
+                    <span>Admin</span>
                 </a>
 
             </nav>
 
+            <!-- SIDEBAR STATUS -->
             <div class="sidebar-footer">
                 <span class="status-dot"></span>
                 Mode Simulasi Aktif
@@ -89,130 +89,41 @@
 
                 <strong>Perhatian:</strong>
 
-                Panel ini hanya mengelola data demo pada browser
-                yang sedang digunakan. Tidak memiliki autentikasi
-                admin atau keamanan untuk pemilihan resmi.
+                Panel ini hanya mengelola data simulasi pada browser
+                yang sedang digunakan. Sistem ini tidak memiliki
+                autentikasi admin atau keamanan untuk pemilihan resmi.
 
             </div>
 
 
-            <!-- STATISTICS -->
-            <section class="stats-grid" aria-label="Statistik peserta">
-
-                <article class="stat-card">
-
-                    <span class="stat-icon">👥</span>
-
-                    <p>Kode Peserta yang Digunakan</p>
-
-                    <h2 id="usedParticipants">0</h2>
-
-                </article>
-
-            </section>
-
-
-            <!-- =====================================
-                 QR CODE GENERATOR
-            ====================================== -->
-
+            <!-- QR CODE GENERATOR -->
             <section class="panel qr-generator-panel">
 
                 <div class="panel-heading">
 
                     <div>
-                        <h2>Generator QR Peserta</h2>
+                        <h2>QR Code Pemilih</h2>
 
                         <p>
-                            Buat dan unduh 100 QR Code peserta
-                            dalam satu file PDF.
+                            Unduh QR Code universal untuk digunakan
+                            dalam simulasi pemungutan suara.
                         </p>
                     </div>
-
-                    <span class="demo-label">QR GENERATOR</span>
-
-                </div>
-
-
-                <!-- INFORMASI PESERTA -->
-                <div class="qr-info-grid">
-
-                    <div class="qr-info-card">
-                        <span>Total Peserta</span>
-                        <strong>100</strong>
-                    </div>
-
-                    <div class="qr-info-card">
-                        <span>Kode Awal</span>
-                        <strong>KLT001</strong>
-                    </div>
-
-                    <div class="qr-info-card">
-                        <span>Kode Akhir</span>
-                        <strong>KLT100</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- TOMBOL GENERATOR -->
-                <div class="qr-controls">
 
                     <button
                         type="button"
                         id="generateQrButton"
                         class="primary-button"
                     >
-                        ↓ Generate &amp; Download PDF
+                        ↓ Unduh QR
                     </button>
 
                 </div>
 
-
-                <!-- STATUS GENERATOR -->
-                <div class="qr-status">
-
-                    <div class="qr-status-heading">
-                        <strong>Status Generator</strong>
-
-                        <span id="qrCount">0 / 100 QR Code</span>
-                    </div>
-
-                    <div class="bar-track">
-
-                        <div
-                            id="qrProgressBar"
-                            class="bar-fill bar-one"
-                            style="width: 0%;"
-                        ></div>
-
-                    </div>
-
-                    <p
-                        id="qrGeneratorMessage"
-                        class="form-message"
-                        role="status"
-                        aria-live="polite"
-                    >
-                        Klik tombol untuk membuat PDF QR Code peserta.
-                    </p>
-
-                </div>
-
-
-                <p class="helper-text">
-                    Sistem akan membuat 100 QR Code dengan nomor peserta
-                    KLT001–KLT100 dan mengunduhnya dalam format PDF.
-                </p>
-
             </section>
 
 
-
-            <!-- =====================================
-                 VOTE RECAPITULATION
-            ====================================== -->
-
+            <!-- VOTE RECAPITULATION -->
             <section class="panel">
 
                 <div class="panel-heading">
@@ -221,7 +132,7 @@
                         <h2>Rekapitulasi Suara</h2>
 
                         <p>
-                            Ringkasan perolehan suara dari data demo
+                            Ringkasan perolehan suara dari data simulasi
                             di browser ini.
                         </p>
                     </div>
@@ -237,7 +148,7 @@
                 </div>
 
 
-                <!-- KANDIDAT TUNGGAL -->
+                <!-- KANDIDAT NOMOR 1 -->
                 <div class="vote-row">
 
                     <div class="vote-label">
@@ -252,10 +163,52 @@
 
                     </div>
 
-                    <div class="bar-track">
+                    <div
+                        class="bar-track"
+                        role="progressbar"
+                        aria-label="Perolehan suara kandidat nomor 1"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                    >
 
                         <div
                             id="candidateBar1"
+                            class="bar-fill bar-one"
+                            style="width: 0%;"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- KANDIDAT NOMOR 2 -->
+                <div class="vote-row">
+
+                    <div class="vote-label">
+
+                        <strong id="candidateName2">
+                            Calon Nomor 2
+                        </strong>
+
+                        <span id="candidateVotes2">
+                            0 suara · 0.0%
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="bar-track"
+                        role="progressbar"
+                        aria-label="Perolehan suara kandidat nomor 2"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                    >
+
+                        <div
+                            id="candidateBar2"
                             class="bar-fill bar-one"
                             style="width: 0%;"
                         ></div>
@@ -279,65 +232,7 @@
             </section>
 
 
-            <!-- =====================================
-                 PARTICIPANT TABLE
-            ====================================== -->
-
-            <section class="panel">
-
-                <div class="panel-heading">
-
-                    <div>
-                        <h2>Penggunaan Kode Peserta</h2>
-
-                        <p>
-                            Daftar kode demo yang telah digunakan
-                            pada browser ini.
-                        </p>
-                    </div>
-
-                </div>
-
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Kode peserta</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="participantTable">
-
-                            <tr>
-                                <td colspan="3" class="empty-cell">
-                                    Belum ada kode peserta digunakan.
-                                </td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-
-                <p class="helper-text">
-                    Kode peserta ditampilkan untuk keperluan
-                    pengujian demo. Jangan gunakan data identitas asli.
-                </p>
-
-            </section>
-
-
-            <!-- =====================================
-                 RESET DATA
-            ====================================== -->
-
+            <!-- RESET DATA -->
             <section class="panel danger-panel">
 
                 <div class="panel-heading">
@@ -346,8 +241,8 @@
                         <h2>Reset Data Simulasi</h2>
 
                         <p>
-                            Menghapus catatan suara dan kode peserta
-                            yang sudah digunakan.
+                            Hapus seluruh catatan suara simulasi
+                            yang tersimpan pada browser ini.
                         </p>
                     </div>
 
@@ -371,18 +266,15 @@
             </section>
 
 
-            <!-- =====================================
-                 FOOTER
-            ====================================== -->
-
+            <!-- FOOTER -->
             <footer class="dashboard-footer">
 
                 <span>
-                    © 2026 Simulasi Pilkades Digital Desa Kalentambo
+                    © 2026 Pilkades Digital Desa Kalentambo
                 </span>
 
                 <span>
-                    Panel demonstrasi, bukan sistem resmi.
+                    Panel demonstrasi · Bukan sistem pemilihan resmi
                 </span>
 
             </footer>

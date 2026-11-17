@@ -15,6 +15,54 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* Tata letak dua kartu kandidat */
+        .candidate-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .candidate-card {
+            position: relative;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .candidate-card.selected {
+            outline: 3px solid #269b62;
+            outline-offset: 3px;
+        }
+
+        .candidate-photo {
+            overflow: hidden;
+        }
+
+        .candidate-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .candidate-photo .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            min-height: 180px;
+            align-items: center;
+            justify-content: center;
+            background: #e8edf3;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .candidate-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body class="voting-body">
@@ -42,7 +90,7 @@
             <div class="voting-heading">
                 <span class="voting-label">BILIK SUARA DIGITAL</span>
                 <h1>Pemungutan Suara</h1>
-                <p>Ikuti enam tahap pemungutan suara digital Pilkades Desa Kalentambo.</p>
+                <p>Ikuti lima tahap pemungutan suara digital Pilkades Desa Kalentambo.</p>
             </div>
 
             <div class="voting-progress">
@@ -51,53 +99,17 @@
                 </div>
 
                 <div class="voting-step-label">
-                    <span id="votingStepText">Langkah 1 dari 6</span>
-                    <span id="votingStepName">Persiapan Pemilih</span>
+                    <span id="votingStepText">Langkah 1 dari 5</span>
+                    <span id="votingStepName">Verifikasi QR Code</span>
                 </div>
             </div>
 
             <section class="voting-screen" aria-label="Tahapan pemungutan suara">
 
-                <!-- LANGKAH 1: PERSIAPAN -->
-                <div class="voting-panel active" id="step1">
-                    <div class="panel-icon">🪪</div>
-                    <span class="panel-label">LANGKAH 01</span>
-                    <h2>Persiapan Pemilih</h2>
-
-                    <p class="panel-description">
-                        Pastikan Anda telah membawa surat undangan
-                        pemungutan suara yang diberikan oleh petugas.
-                    </p>
-
-                    <div class="preparation-card">
-                        <div class="preparation-icon">📄</div>
-                        <h3>Surat Undangan Pemungutan Suara</h3>
-                        <p>
-                            Surat undangan berisi identitas pemilih
-                            dan QR Code khusus yang digunakan untuk verifikasi.
-                        </p>
-
-                        <div class="preparation-notice">
-                            <span>!</span>
-                            <p>
-                                Surat undangan bersifat rahasia.
-                                Jangan memberikan QR Code kepada orang lain.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="panel-message" id="preparationMessage"
-                         role="status" aria-live="polite"></div>
-
-                    <button type="button" class="voting-primary" id="startVotingButton">
-                        Saya Sudah Siap →
-                    </button>
-                </div>
-
-                <!-- LANGKAH 2: VERIFIKASI QR -->
-                <div class="voting-panel" id="step2">
+                <!-- LANGKAH 1: VERIFIKASI QR -->
+                <div class="voting-panel active" id="step2">
                     <div class="panel-icon">📷</div>
-                    <span class="panel-label">LANGKAH 02</span>
+                    <span class="panel-label">LANGKAH 01</span>
                     <h2>Verifikasi QR Code</h2>
 
                     <p class="panel-description">
@@ -144,18 +156,20 @@
                     </button>
                 </div>
 
-                <!-- LANGKAH 3: PEMILIHAN GILANG RAMADHAN -->
+                <!-- LANGKAH 2: PEMILIHAN KANDIDAT -->
                 <div class="voting-panel" id="step3">
                     <div class="panel-icon">🗳️</div>
-                    <span class="panel-label">LANGKAH 03</span>
+                    <span class="panel-label">LANGKAH 02</span>
                     <h2>Pilih Calon Kepala Desa</h2>
 
                     <p class="panel-description">
                         Berikut calon kepala desa yang tersedia.
-                        Tekan tombol PILIH untuk menentukan pilihan Anda.
+                        Tekan salah satu kartu untuk menentukan pilihan Anda.
                     </p>
 
                     <div class="candidate-grid">
+
+                        <!-- KANDIDAT NOMOR 1 -->
                         <button type="button"
                                 class="candidate-card"
                                 data-candidate="1"
@@ -180,6 +194,27 @@
 
                             <div class="candidate-check" aria-hidden="true">✓</div>
                         </button>
+
+                        <!-- KANDIDAT NOMOR 2 -->
+                        <button type="button"
+                                class="candidate-card"
+                                data-candidate="2"
+                                aria-label="Pilih Calon Nomor 2">
+
+                            <div class="candidate-number">02</div>
+
+                            <div class="candidate-photo">
+                                <div class="photo-placeholder">
+                                    CALON NOMOR 2
+                                </div>
+                            </div>
+
+                            <h3>Calon Nomor 2</h3>
+                            <span>CALON NOMOR URUT 2</span>
+
+                            <div class="candidate-check" aria-hidden="true">✓</div>
+                        </button>
+
                     </div>
 
                     <div class="panel-message" id="candidateMessage"
@@ -191,10 +226,10 @@
                     </button>
                 </div>
 
-                <!-- LANGKAH 4: KONFIRMASI AKHIR -->
+                <!-- LANGKAH 3: KONFIRMASI PILIHAN -->
                 <div class="voting-panel" id="step4">
                     <div class="panel-icon">☑️</div>
-                    <span class="panel-label">LANGKAH 04</span>
+                    <span class="panel-label">LANGKAH 03</span>
                     <h2>Konfirmasi Pilihan</h2>
 
                     <p class="panel-description">
@@ -207,7 +242,7 @@
                             <img
                                 id="finalConfirmPhoto"
                                 src="assets/calon-gilang.jpg"
-                                alt="Foto Gilang Ramadhan"
+                                alt="Foto calon kepala desa"
                             >
                         </div>
 
@@ -240,10 +275,10 @@
                          role="status" aria-live="polite"></div>
                 </div>
 
-                <!-- LANGKAH 5: SUARA BERHASIL DISIMPAN -->
+                <!-- LANGKAH 4: SUARA BERHASIL DISIMPAN -->
                 <div class="voting-panel" id="step5">
                     <div class="success-icon">✓</div>
-                    <span class="panel-label">LANGKAH 05</span>
+                    <span class="panel-label">LANGKAH 04</span>
                     <h2>Terima Kasih!</h2>
 
                     <p class="success-description">
@@ -276,10 +311,10 @@
                     </button>
                 </div>
 
-                <!-- LANGKAH 6: BUKTI PEMILIHAN -->
+                <!-- LANGKAH 5: BUKTI PEMILIHAN -->
                 <div class="voting-panel" id="step6">
                     <div class="panel-icon">🧾</div>
-                    <span class="panel-label">LANGKAH 06</span>
+                    <span class="panel-label">LANGKAH 05</span>
                     <h2>Pengambilan Bukti Pemilihan</h2>
 
                     <p class="panel-description">
@@ -341,11 +376,6 @@
                                 id="printReceiptButton">
                             🖨 Cetak Bukti Pemilihan
                         </button>
-
-                        <a href="hasil.html"
-                           class="voting-secondary result-link">
-                            Lihat Hasil Simulasi
-                        </a>
 
                         <a href="index.html"
                            class="voting-secondary result-link">

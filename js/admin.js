@@ -2,7 +2,7 @@
 /* =====================================================
    PILKADES DIGITAL KALENTAMBO
    ADMIN DASHBOARD
-   QR GENERATOR PDF + UNDANGAN PDF
+   UNIVERSAL QR + SIMPLE INVITATION PDF
 ===================================================== */
 
 "use strict";
@@ -21,8 +21,8 @@ const DEFAULT_CANDIDATES = {
     candidate2: "Calon Nomor Urut 2"
 };
 
-const QR_TOTAL = 100;
-const QR_PREFIX = "KLT";
+// Satu QR universal untuk seluruh peserta mode DEMO.
+const DEMO_UNIVERSAL_QR = "KLT001";
 
 const $ = id => document.getElementById(id);
 
@@ -139,12 +139,12 @@ function getCandidates() {
 
     return {
         candidate1,
-        candidate2: DEFAULT_CANDIDATES.candidate2
+        candidate2: "Calon Nomor 2"
     };
 }
 
 // =====================================================
-// 6. DATA SUARA DAN PESERTA
+// 6. DATA SUARA
 // =====================================================
 
 function getVotes() {
@@ -152,29 +152,8 @@ function getVotes() {
     return Array.isArray(data) ? data : [];
 }
 
-function getUsedParticipants() {
-    const data = readJSON(USED_KEY, []);
-
-    if (Array.isArray(data)) {
-        return [
-            ...new Set(
-                data
-                    .filter(item => item !== null && item !== undefined)
-                    .map(item => String(item).trim())
-                    .filter(Boolean)
-            )
-        ];
-    }
-
-    if (data && typeof data === "object") {
-        return Object.keys(data).filter(key => data[key]);
-    }
-
-    return [];
-}
-
 // =====================================================
-// 7. IDENTIFIKASI KANDIDAT TUNGGAL
+// 7. IDENTIFIKASI KANDIDAT
 // =====================================================
 
 function identifyCandidate(vote, candidates) {
@@ -191,8 +170,11 @@ function identifyCandidate(vote, candidates) {
     if (raw === undefined) return 0;
 
     const value = String(raw).trim().toLowerCase();
-    const name1 = candidates.candidate1.toLowerCase();
 
+    const name1 = candidates.candidate1.toLowerCase();
+    const name2 = candidates.candidate2.toLowerCase();
+
+    // Kandidat nomor 1
     if (
         value === "1" ||
         value === "01" ||
@@ -205,94 +187,82 @@ function identifyCandidate(vote, candidates) {
         return 1;
     }
 
+    // Kandidat nomor 2
+    if (
+        value === "2" ||
+        value === "02" ||
+        value === "candidate2" ||
+        value === "candidate-2" ||
+        value === name2.toLowerCase() ||
+        /^calon\s*0?2$/.test(value) ||
+        /nomor\s*urut\s*0?2/.test(value)
+    ) {
+        return 2;
+    }
+
     return 0;
 }
 
 // =====================================================
-// 8. TABEL PESERTA
-// =====================================================
-
-function renderParticipants(participants) {
-    const table = $("participantTable");
-    if (!table) return;
-
-    table.replaceChildren();
-
-    if (participants.length === 0) {
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
-
-        cell.colSpan = 3;
-        cell.className = "empty-cell";
-        cell.textContent = "Belum ada kode pemilih yang digunakan.";
-
-        row.appendChild(cell);
-        table.appendChild(row);
-        return;
-    }
-
-    participants.forEach((code, index) => {
-        const row = document.createElement("tr");
-
-        const numberCell = document.createElement("td");
-        numberCell.textContent = index + 1;
-
-        const codeCell = document.createElement("td");
-        codeCell.textContent = String(code);
-
-        const statusCell = document.createElement("td");
-        const status = document.createElement("span");
-
-        status.className = "status-used";
-        status.textContent = "Sudah digunakan";
-
-        statusCell.appendChild(status);
-        row.append(numberCell, codeCell, statusCell);
-
-        table.appendChild(row);
-    });
-}
-
-// =====================================================
-// 9. DASHBOARD
+// 8. DASHBOARD
 // =====================================================
 
 function renderDashboard() {
     const candidates = getCandidates();
     const votes = getVotes();
-    const participants = getUsedParticipants();
 
     let count1 = 0;
+    let count2 = 0;
     let invalidVotes = 0;
 
     votes.forEach(vote => {
         const selected = identifyCandidate(vote, candidates);
 
-        if (selected === 1) count1++;
-        else invalidVotes++;
+        if (selected === 1) {
+            count1++;
+        } else if (selected === 2) {
+            count2++;
+        } else {
+            invalidVotes++;
+        }
     });
 
-    const validVotes = count1;
-    const percent1 = validVotes ? 100 : 0;
+    const validVotes = count1 + count2;
 
-    setText("usedParticipants", participants.length);
+    const percent1 = validVotes > 0
+        ? (count1 / validVotes) * 100
+        : 0;
 
+    const percent2 = validVotes > 0
+        ? (count2 / validVotes) * 100
+        : 0;
+
+    // Nama kandidat
     setText("candidateName1", candidates.candidate1);
+    setText("candidateName2", candidates.candidate2);
+
+    // Jumlah dan persentase suara
     setText(
         "candidateVotes1",
         `${count1} suara · ${percent1.toFixed(1)}%`
     );
 
-    setWidth("candidateBar1", percent1);
+    setText(
+        "candidateVotes2",
+        `${count2} suara · ${percent2.toFixed(1)}%`
+    );
 
+    // Progress bar
+    setWidth("candidateBar1", percent1);
+    setWidth("candidateBar2", percent2);
+
+    // Ringkasan suara
     setText("summaryValid", validVotes);
     setText("summaryInvalid", invalidVotes);
-
-    renderParticipants(participants);
 }
 
 // =====================================================
-// 10. REFRESH DASHBOARD
+// 9. REFRESH DASHBOARD
 // =====================================================
 
 const refreshButton = $("refreshButton");
@@ -305,33 +275,28 @@ if (refreshButton) {
 }
 
 // =====================================================
-// 11. KONFIGURASI KODE PESERTA
-// =====================================================
-
-function createParticipantCode(number) {
-    return `${QR_PREFIX}${String(number).padStart(3, "0")}`;
-}
-
-// =====================================================
-// 12. PROGRESS QR
+// 10. HELPER STATUS QR
 // =====================================================
 
 function updateQrProgress(current, message, isError = false) {
-    setText("qrCount", `${current} / ${QR_TOTAL} QR Code`);
-    setWidth("qrProgressBar", (current / QR_TOTAL) * 100);
-
+    // Progress bar dihilangkan dari UI.
+    // Fungsi dipertahankan agar kompatibel dengan alur generator.
     const element = $("qrGeneratorMessage");
-    if (!element) return;
 
-    element.textContent = message;
-    element.classList.remove("success", "error");
+    if (element) {
+        element.textContent = message;
+        element.classList.remove("success", "error");
 
-    if (isError) element.classList.add("error");
-    else if (current === QR_TOTAL) element.classList.add("success");
+        if (isError) {
+            element.classList.add("error");
+        } else if (current >= 1) {
+            element.classList.add("success");
+        }
+    }
 }
 
 // =====================================================
-// 13. GENERATOR QR CODE KE PDF
+// 11. GENERATOR QR CODE KE PDF
 // =====================================================
 
 async function generateAllQrCodes() {
@@ -345,6 +310,12 @@ async function generateAllQrCodes() {
             "Library QR Code gagal dimuat. Periksa koneksi internet.",
             true
         );
+
+        showAdminToast(
+            "Library QR Code gagal dimuat.",
+            "error"
+        );
+
         return;
     }
 
@@ -354,8 +325,6 @@ async function generateAllQrCodes() {
         button.disabled = true;
         button.textContent = "Sedang Membuat PDF...";
     }
-
-    updateQrProgress(0, "Menyiapkan dokumen PDF...");
 
     try {
         const jsPDF = await loadJsPDF();
@@ -367,119 +336,81 @@ async function generateAllQrCodes() {
             compress: true
         });
 
-        const columns = 3;
-        const perPage = 12;
+        const code = DEMO_UNIVERSAL_QR;
+        const qrImage = await createInvitationQR(code);
 
-        for (let i = 1; i <= QR_TOTAL; i++) {
-            if (i === 1 || (i - 1) % perPage === 0) {
-                if (i > 1) doc.addPage("a4", "portrait");
+        doc.setTextColor(16, 42, 67);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
 
-                doc.setTextColor(16, 42, 67);
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(15);
-                doc.text("QR CODE PESERTA", 105, 17, {
-                    align: "center"
-                });
+        doc.text("QR CODE UNIVERSAL", 105, 24, {
+            align: "center"
+        });
 
-                doc.setFont("helvetica", "normal");
-                doc.setFontSize(9);
-                doc.text(
-                    "PEMILIHAN KEPALA DESA KALENTAMBO",
-                    105,
-                    23,
-                    { align: "center" }
-                );
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
 
-                doc.setDrawColor(210, 218, 230);
-                doc.line(15, 27, 195, 27);
-            }
-
-            const code = createParticipantCode(i);
-            const qrImage = await createInvitationQR(code);
-
-            const position = (i - 1) % perPage;
-            const column = position % columns;
-            const row = Math.floor(position / columns);
-
-            const x = 16 + column * 62;
-            const y = 32 + row * 62;
-
-            doc.setDrawColor(210, 218, 230);
-            doc.setLineWidth(0.3);
-            doc.roundedRect(x, y, 56, 56, 2, 2);
-
-            doc.addImage(
-                qrImage,
-                "PNG",
-                x + 11,
-                y + 4,
-                34,
-                34
-            );
-
-            doc.setTextColor(16, 42, 67);
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.text(code, x + 28, y + 45, {
-                align: "center"
-            });
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(7);
-            doc.text(
-                "PILKADES DIGITAL KALENTAMBO",
-                x + 28,
-                y + 51,
-                { align: "center" }
-            );
-
-            updateQrProgress(i, `Sedang membuat QR Code ${code}...`);
-
-            await new Promise(resolve => setTimeout(resolve, 0));
-        }
-
-        const pageCount = doc.internal.getNumberOfPages();
-
-        for (let page = 1; page <= pageCount; page++) {
-            doc.setPage(page);
-            doc.setTextColor(130, 130, 130);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(8);
-
-            doc.text(
-                `Halaman ${page} dari ${pageCount}`,
-                105,
-                287,
-                { align: "center" }
-            );
-        }
-
-        doc.save("QR-Code-Peserta-Kalentambo.pdf");
-
-        updateQrProgress(
-            QR_TOTAL,
-            "Berhasil! PDF berisi 100 QR Code telah dibuat dan diunduh."
+        doc.text(
+            "PEMILIHAN KEPALA DESA KALENTAMBO",
+            105,
+            32,
+            { align: "center" }
         );
 
-        showAdminToast("PDF 100 QR Code berhasil dibuat dan diunduh.");
+        doc.setDrawColor(210, 218, 230);
+        doc.setLineWidth(0.5);
+
+        doc.roundedRect(55, 48, 100, 116, 3, 3);
+        doc.addImage(qrImage, "PNG", 75, 57, 60, 60);
+
+        doc.setTextColor(16, 42, 67);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+
+        doc.text(code, 105, 130, {
+            align: "center"
+        });
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+
+        doc.text(
+            "Gunakan QR yang sama untuk simulasi pemungutan suara.",
+            105,
+            180,
+            { align: "center" }
+        );
+
+        doc.setTextColor(130, 130, 130);
+        doc.setFontSize(8);
+
+        doc.text(
+            "SISTEM e-VOTING DESA KALENTAMBO",
+            105,
+            287,
+            { align: "center" }
+        );
+
+        doc.save("QR-Code-Universal-KLT001.pdf");
+
+        showAdminToast(
+            "QR universal berhasil dibuat dan diunduh."
+        );
 
     } catch (error) {
         console.error("[QR PDF GENERATOR]", error);
 
-        updateQrProgress(
-            0,
+        showAdminToast(
             error.message || "Gagal membuat PDF QR Code.",
-            true
+            "error"
         );
-
-        showAdminToast("Gagal membuat PDF QR Code.", "error");
 
     } finally {
         qrGenerating = false;
 
         if (button) {
             button.disabled = false;
-            button.textContent = "↓ Generate & Download PDF";
+            button.textContent = "↓ Unduh QR";
         }
     }
 }
@@ -487,11 +418,16 @@ async function generateAllQrCodes() {
 const generateQrButton = $("generateQrButton");
 
 if (generateQrButton) {
-    generateQrButton.addEventListener("click", generateAllQrCodes);
+    generateQrButton.textContent = "↓ Unduh QR";
+
+    generateQrButton.addEventListener(
+        "click",
+        generateAllQrCodes
+    );
 }
 
 // =====================================================
-// 14. GENERATOR SURAT UNDANGAN PDF
+// 12. GENERATOR SURAT UNDANGAN
 // =====================================================
 
 function createInvitationPanel() {
@@ -503,86 +439,18 @@ function createInvitationPanel() {
     const panel = document.createElement("section");
 
     panel.id = "invitationGeneratorPanel";
-    panel.className = "panel";
+    panel.className = "panel invitation-generator-panel";
 
     panel.innerHTML = `
-        <div class="panel-heading">
-            <div>
-                <h2>Generator Surat Undangan Pemilih</h2>
-                <p>
-                    Buat 100 surat undangan untuk 100 pemilih
-                    dalam satu dokumen PDF ukuran A4.
-                </p>
-            </div>
-            <span class="pdf-label">PDF GENERATOR</span>
-        </div>
-
-        <div class="notice">
-            Setiap pemilih mendapatkan satu surat dengan
-            QR Code unik yang kompatibel dengan scanner e-Voting.
-        </div>
-
-        <div class="candidate-form">
-            <div class="form-group">
-                <label for="invitationDate">Hari / Tanggal Kegiatan</label>
-                <input type="text" id="invitationDate"
-                    placeholder="Contoh: Senin, 30 November 2026">
-            </div>
-
-            <div class="form-group">
-                <label for="invitationTime">Waktu Kegiatan</label>
-                <input type="text" id="invitationTime"
-                    placeholder="Contoh: 08.00 WIB - selesai">
-            </div>
-
-            <div class="form-group">
-                <label for="invitationLocation">Tempat Kegiatan</label>
-                <input type="text" id="invitationLocation"
-                    placeholder="Contoh: Balai Desa Kalentambo">
-            </div>
-
-            <div class="form-group">
-                <label for="invitationLetterDate">Tanggal Pembuatan Surat</label>
-                <input type="text" id="invitationLetterDate"
-                    placeholder="Contoh: Kalentambo, 20 November 2026">
-            </div>
-
-            <div class="form-group">
-                <label for="invitationNumber">Nomor Surat</label>
-                <input type="text" id="invitationNumber"
-                    value="001/PAN-PILKADES/KLT/XI/2026">
-            </div>
-        </div>
-
         <div class="qr-controls">
-            <button type="button" id="generateInvitationPDF"
-                class="primary-button">
-                Unduh 100 Surat Undangan PDF
+            <button
+                type="button"
+                id="generateInvitationPDF"
+                class="primary-button"
+            >
+                ↓ Unduh Surat Undangan
             </button>
         </div>
-
-        <div class="qr-status">
-            <div class="qr-status-heading">
-                <strong>Proses Pembuatan PDF</strong>
-                <span id="invitationProgressText">0 / 100 surat</span>
-            </div>
-
-            <div class="bar-track">
-                <div id="invitationProgressBar"
-                    class="bar-fill bar-one" style="width: 0%">
-                </div>
-            </div>
-
-            <p id="invitationMessage" class="form-message"
-                role="status" aria-live="polite">
-                Isi informasi kegiatan sebelum membuat PDF.
-            </p>
-        </div>
-
-        <p class="helper-text">
-            Identitas menggunakan nama Pemilih 1 sampai Pemilih 100.
-            Setiap surat memiliki QR Code yang berbeda.
-        </p>
     `;
 
     qrPanel.insertAdjacentElement("afterend", panel);
@@ -594,7 +462,7 @@ function createInvitationPanel() {
 }
 
 // =====================================================
-// 15. LOAD LIBRARY JSPDF
+// 13. LOAD LIBRARY JSPDF
 // =====================================================
 
 function loadJsPDF() {
@@ -660,7 +528,7 @@ function loadJsPDF() {
 }
 
 // =====================================================
-// 16. MEMBUAT QR PNG UNTUK PDF
+// 14. MEMBUAT QR PNG UNTUK PDF
 // =====================================================
 
 function createInvitationQR(code) {
@@ -680,7 +548,8 @@ function createInvitationQR(code) {
 
         try {
             new QRCode(temporaryContainer, {
-                text: `QR-${code}`,
+                // Isi QR selalu persis KLT001.
+                text: DEMO_UNIVERSAL_QR,
                 width: 400,
                 height: 400,
                 colorDark: "#000000",
@@ -693,6 +562,7 @@ function createInvitationQR(code) {
 
                 if (canvas) {
                     const image = canvas.toDataURL("image/png");
+
                     temporaryContainer.remove();
                     resolve(image);
                     return;
@@ -702,12 +572,14 @@ function createInvitationQR(code) {
 
                 if (img && img.complete && img.naturalWidth > 0) {
                     const image = img.src;
+
                     temporaryContainer.remove();
                     resolve(image);
                     return;
                 }
 
                 temporaryContainer.remove();
+
                 reject(new Error(`QR ${code} gagal dibuat.`));
             });
 
@@ -719,17 +591,18 @@ function createInvitationQR(code) {
 }
 
 // =====================================================
-// 17. DESAIN SURAT UNDANGAN A4
+// 15. DESAIN SURAT UNDANGAN A4
 // =====================================================
 
 function drawInvitation(doc, data) {
     const pageWidth = 210;
-    const margin = 18;
+    const margin = 20;
 
     doc.setDrawColor(35, 55, 80);
     doc.setLineWidth(0.5);
     doc.rect(10, 10, 190, 277);
 
+    // KOP SURAT
     doc.setTextColor(16, 42, 67);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
@@ -737,194 +610,151 @@ function drawInvitation(doc, data) {
     doc.text(
         "PEMERINTAH DESA KALENTAMBO",
         pageWidth / 2,
-        25,
+        27,
         { align: "center" }
     );
 
     doc.setFontSize(11);
+
     doc.text(
         "PANITIA PEMILIHAN KEPALA DESA",
         pageWidth / 2,
-        32,
+        35,
         { align: "center" }
     );
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
-    doc.text("Desa Kalentambo", pageWidth / 2, 38, {
-        align: "center"
-    });
+
+    doc.text(
+        "DESA KALENTAMBO",
+        pageWidth / 2,
+        42,
+        { align: "center" }
+    );
 
     doc.setDrawColor(16, 42, 67);
     doc.setLineWidth(0.8);
-    doc.line(margin, 44, 192, 44);
+    doc.line(margin, 49, 190, 49);
 
+    // JUDUL SURAT
     doc.setTextColor(30, 30, 30);
-    doc.setFontSize(10);
-    doc.text(`Nomor: ${data.number}`, margin, 55);
-    doc.text("Lampiran: -", margin, 61);
-    doc.text(
-        "Perihal: Undangan Pemilihan Kepala Desa",
-        margin,
-        67
-    );
-
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(13);
+    doc.setFontSize(14);
+
     doc.text(
         "SURAT UNDANGAN PEMILIH",
         pageWidth / 2,
-        84,
+        68,
         { align: "center" }
     );
 
-    doc.setDrawColor(100, 100, 100);
-    doc.line(68, 87, 142, 87);
-
+    // PENERIMA
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(30, 30, 30);
-    doc.text("Kepada Yth.", margin, 100);
+    doc.setFontSize(11);
+
+    doc.text("Kepada Yth.", margin, 91);
 
     doc.setFont("helvetica", "bold");
-    doc.text(data.name, margin, 106);
+
+    doc.text(
+        "Bapak/Ibu/Saudara(i) Warga Desa Kalentambo",
+        margin,
+        99
+    );
 
     doc.setFont("helvetica", "normal");
-    doc.text("di Tempat", margin, 112);
+    doc.text("di Tempat", margin, 107);
 
+    // ISI SURAT
     const paragraph = [
         "Dengan hormat,",
         "",
-        "Dalam rangka pelaksanaan Pemilihan Kepala Desa",
-        "Desa Kalentambo melalui sistem e-Voting, kami",
-        "mengundang Saudara/i untuk menggunakan hak pilih",
-        "sesuai jadwal dan ketentuan yang berlaku.",
+        "Dalam rangka pelaksanaan Pemilihan Kepala Desa Kalentambo,",
+        "kami mengundang Bapak/Ibu/Saudara(i) untuk berpartisipasi",
+        "dalam kegiatan pemungutan suara dan menggunakan hak pilih",
+        "sesuai dengan ketentuan yang berlaku.",
         "",
-        "Proses pemungutan suara dilakukan melalui verifikasi",
-        "kode peserta menggunakan QR Code, dilanjutkan dengan",
-        "pemilihan calon serta konfirmasi pilihan."
+        "Untuk mengikuti simulasi e-Voting, silakan pindai QR Code",
+        "yang tertera pada surat ini, kemudian ikuti petunjuk pada",
+        "layar hingga proses pemungutan suara selesai.",
+        "",
+        "Partisipasi dan kerja sama seluruh warga sangat diharapkan",
+        "demi kelancaran pelaksanaan Pemilihan Kepala Desa Kalentambo.",
+        "",
+        "Demikian undangan ini disampaikan. Atas perhatian dan",
+        "partisipasi Bapak/Ibu/Saudara(i), kami ucapkan terima kasih."
     ];
 
-    doc.text(paragraph, margin, 125, {
-        lineHeightFactor: 1.5
+    doc.text(paragraph, margin, 124, {
+        lineHeightFactor: 1.55
     });
 
+    // QR CODE
     doc.setFont("helvetica", "bold");
-    doc.text("INFORMASI KEGIATAN", margin, 177);
+    doc.setFontSize(11);
 
-    doc.setFont("helvetica", "normal");
-    doc.text(`Hari/Tanggal : ${data.date}`, margin, 185);
-    doc.text(`Waktu        : ${data.time}`, margin, 192);
-    doc.text(`Tempat       : ${data.location}`, margin, 199);
+    doc.text(
+        "QR CODE E-VOTING",
+        pageWidth / 2,
+        220,
+        { align: "center" }
+    );
+
+    doc.addImage(
+        data.qrImage,
+        "PNG",
+        85,
+        226,
+        40,
+        40
+    );
 
     doc.setFont("helvetica", "bold");
-    doc.text("IDENTITAS PEMILIH", margin, 211);
-
-    doc.setFont("helvetica", "normal");
-    doc.text(`Nama           : ${data.name}`, margin, 219);
-    doc.text(`Nomor Pemilih  : ${data.code}`, margin, 226);
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text("QR CODE UNDANGAN", 105, 235, {
-        align: "center"
-    });
-
-    doc.addImage(data.qrImage, "PNG", 86, 239, 38, 38);
-
-    doc.setFontSize(8);
-    doc.text(`QR-${data.code}`, 105, 280, {
-        align: "center"
-    });
-
     doc.setFontSize(9);
-    doc.text(data.letterDate, 153, 211, {
-        align: "center"
-    });
 
-    doc.text("Panitia Pemilihan,", 153, 218, {
-        align: "center"
-    });
+    doc.text(
+        DEMO_UNIVERSAL_QR,
+        pageWidth / 2,
+        270,
+        { align: "center" }
+    );
 
-    doc.text("(____________________)", 153, 249, {
-        align: "center"
-    });
-
+    // FOOTER
     doc.setTextColor(130, 130, 130);
-    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+
     doc.text(
         "SISTEM e-VOTING DESA KALENTAMBO",
         pageWidth / 2,
-        284,
+        282,
         { align: "center" }
     );
 }
 
 // =====================================================
-// 18. PROGRESS PDF UNDANGAN
-// =====================================================
-
-function updateInvitationProgress(current, message, isError = false) {
-    const percentage = (current / QR_TOTAL) * 100;
-
-    const bar = $("invitationProgressBar");
-    const text = $("invitationProgressText");
-    const messageElement = $("invitationMessage");
-
-    if (bar) bar.style.width = `${percentage}%`;
-    if (text) text.textContent = `${current} / ${QR_TOTAL} surat`;
-
-    if (messageElement) {
-        messageElement.textContent = message;
-        messageElement.classList.remove("success", "error");
-
-        if (isError) messageElement.classList.add("error");
-        else if (current === QR_TOTAL) messageElement.classList.add("success");
-    }
-}
-
-// =====================================================
-// 19. GENERATE PDF 100 PEMILIH
+// 16. GENERATE SATU SURAT UNDANGAN
 // =====================================================
 
 async function generateInvitationPDF() {
     if (generatingPDF) return;
 
-    const date = $("invitationDate")?.value.trim();
-    const time = $("invitationTime")?.value.trim();
-    const location = $("invitationLocation")?.value.trim();
-    const letterDate = $("invitationLetterDate")?.value.trim();
-    const number = $("invitationNumber")?.value.trim();
-
     const button = $("generateInvitationPDF");
-
-    if (!date || !time || !location || !letterDate || !number) {
-        updateInvitationProgress(
-            0,
-            "Lengkapi semua informasi kegiatan dan surat terlebih dahulu.",
-            true
-        );
-        return;
-    }
-
-    if (typeof QRCode === "undefined") {
-        updateInvitationProgress(
-            0,
-            "Library QR Code belum tersedia. Periksa koneksi internet.",
-            true
-        );
-        return;
-    }
 
     generatingPDF = true;
 
     if (button) {
         button.disabled = true;
-        button.textContent = "Sedang Membuat PDF...";
+        button.textContent = "Membuat Surat...";
     }
 
     try {
-        updateInvitationProgress(0, "Memuat library PDF...");
+        if (typeof QRCode === "undefined") {
+            throw new Error(
+                "Library QR Code belum tersedia. Periksa koneksi internet."
+            );
+        }
 
         const jsPDF = await loadJsPDF();
 
@@ -935,49 +765,26 @@ async function generateInvitationPDF() {
             compress: true
         });
 
-        for (let i = 1; i <= QR_TOTAL; i++) {
-            const code = createParticipantCode(i);
-            const qrImage = await createInvitationQR(code);
-
-            if (i > 1) {
-                doc.addPage("a4", "portrait");
-            }
-
-            drawInvitation(doc, {
-                number,
-                date,
-                time,
-                location,
-                letterDate,
-                code,
-                name: `Pemilih ${i}`,
-                qrImage
-            });
-
-            updateInvitationProgress(
-                i,
-                `Membuat surat Pemilih ${i} (${code})...`
-            );
-
-            await new Promise(resolve => setTimeout(resolve, 0));
-        }
-
-        doc.save("100-Surat-Undangan-Pemilih-eVoting-Kalentambo.pdf");
-
-        updateInvitationProgress(
-            QR_TOTAL,
-            "Berhasil! PDF berisi 100 surat undangan siap dicetak."
+        const qrImage = await createInvitationQR(
+            DEMO_UNIVERSAL_QR
         );
 
-        showAdminToast("PDF 100 surat undangan berhasil dibuat.");
+        drawInvitation(doc, { qrImage });
+
+        doc.save(
+            "Surat-Undangan-Pemilih-Kalentambo.pdf"
+        );
+
+        showAdminToast(
+            "Surat undangan berhasil diunduh."
+        );
 
     } catch (error) {
         console.error("[INVITATION PDF]", error);
 
-        updateInvitationProgress(
-            0,
-            error.message || "Gagal membuat PDF undangan.",
-            true
+        showAdminToast(
+            error.message || "Gagal membuat surat undangan.",
+            "error"
         );
 
     } finally {
@@ -985,13 +792,13 @@ async function generateInvitationPDF() {
 
         if (button) {
             button.disabled = false;
-            button.textContent = "Unduh 100 Surat Undangan PDF";
+            button.textContent = "↓ Unduh Surat Undangan";
         }
     }
 }
 
 // =====================================================
-// 20. RESET DATA e-VOTING
+// 17. RESET DATA e-VOTING
 // =====================================================
 
 const resetButton = $("resetButton");
@@ -999,24 +806,28 @@ const resetButton = $("resetButton");
 if (resetButton) {
     resetButton.addEventListener("click", function() {
         const confirmed = confirm(
-            "Yakin ingin menghapus seluruh data suara dan kode pemilih di browser ini? Tindakan ini tidak dapat dibatalkan."
+            "Yakin ingin menghapus seluruh data suara simulasi di browser ini? Tindakan ini tidak dapat dibatalkan."
         );
 
         if (!confirmed) return;
 
         try {
             localStorage.removeItem(VOTES_KEY);
+
+            // Membersihkan data kode lama dari versi sebelumnya.
             localStorage.removeItem(USED_KEY);
 
             renderDashboard();
 
             showMessage(
                 "resetMessage",
-                "Data suara dan kode pemilih berhasil direset.",
+                "Data suara simulasi berhasil direset.",
                 true
             );
 
-            showAdminToast("Data simulasi berhasil direset.");
+            showAdminToast(
+                "Data simulasi berhasil direset."
+            );
 
         } catch (error) {
             console.error("Gagal mereset data:", error);
@@ -1030,13 +841,12 @@ if (resetButton) {
 }
 
 // =====================================================
-// 21. SINKRONISASI ANTAR TAB
+// 18. SINKRONISASI ANTAR TAB
 // =====================================================
 
 window.addEventListener("storage", function(event) {
     if (
         event.key === VOTES_KEY ||
-        event.key === USED_KEY ||
         event.key === CANDIDATES_KEY ||
         event.key === null
     ) {
@@ -1045,13 +855,14 @@ window.addEventListener("storage", function(event) {
 });
 
 // =====================================================
-// 22. MODERN ADMIN UI - CSS DINAMIS
+// 19. MODERN ADMIN UI - CSS DINAMIS
 // =====================================================
 
 function injectModernAdminStyles() {
     if ($("modern-admin-ui-styles")) return;
 
     const style = document.createElement("style");
+
     style.id = "modern-admin-ui-styles";
 
     style.textContent = `
@@ -1201,8 +1012,11 @@ function injectModernAdminStyles() {
         .panel,
         .stat-card,
         .qr-generator-panel {
-            transition: background .25s ease, border-color .25s ease,
-                        box-shadow .25s ease, transform .2s ease;
+            transition:
+                background .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease,
+                transform .2s ease;
         }
 
         body.admin-dark-mode .panel,
@@ -1253,6 +1067,7 @@ function injectModernAdminStyles() {
                 opacity: 0;
                 transform: translateY(12px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1332,7 +1147,7 @@ function injectModernAdminStyles() {
 }
 
 // =====================================================
-// 23. SIDEBAR, DARK MODE, MOBILE MENU
+// 20. SIDEBAR, DARK MODE, MOBILE MENU
 // =====================================================
 
 function initModernAdminUI() {
@@ -1347,6 +1162,7 @@ function initModernAdminUI() {
         return;
     }
 
+    // Tombol sidebar
     if (!$("adminSidebarToggle")) {
         const brand = sidebar.querySelector(".brand");
 
@@ -1356,85 +1172,65 @@ function initModernAdminUI() {
             toggle.id = "adminSidebarToggle";
             toggle.type = "button";
             toggle.className = "admin-icon-button";
+            toggle.setAttribute("aria-label", "Buka atau tutup sidebar");
             toggle.innerHTML = "☰";
-            toggle.title = "Ciutkan sidebar";
-            toggle.setAttribute("aria-label", "Ciutkan sidebar");
-
-            brand.appendChild(toggle);
 
             toggle.addEventListener("click", function() {
                 if (window.innerWidth <= 900) {
-                    document.body.classList.add("mobile-sidebar-open");
+                    document.body.classList.toggle("mobile-sidebar-open");
                 } else {
                     layout.classList.toggle("sidebar-collapsed");
-
-                    toggle.title = layout.classList.contains("sidebar-collapsed")
-                        ? "Perluas sidebar"
-                        : "Ciutkan sidebar";
                 }
             });
+
+            brand.appendChild(toggle);
         }
     }
 
-    let actions = $("adminUIActions");
+    // Tombol dark mode
+    if (!$("adminThemeToggle") && topbar) {
+        const actions = document.createElement("div");
 
-    if (!actions) {
-        actions = document.createElement("div");
-        actions.id = "adminUIActions";
         actions.className = "admin-ui-actions";
 
-        if (topbar) topbar.appendChild(actions);
-        else document.body.appendChild(actions);
-    }
-
-    if (!$("adminMobileMenu")) {
-        const mobileButton = document.createElement("button");
-
-        mobileButton.id = "adminMobileMenu";
-        mobileButton.type = "button";
-        mobileButton.className = "admin-icon-button";
-        mobileButton.innerHTML = "☰";
-        mobileButton.title = "Buka menu";
-
-        mobileButton.addEventListener("click", function() {
-            document.body.classList.add("mobile-sidebar-open");
-        });
-
-        actions.appendChild(mobileButton);
-    }
-
-    if (!$("adminThemeToggle")) {
         const themeButton = document.createElement("button");
 
         themeButton.id = "adminThemeToggle";
         themeButton.type = "button";
         themeButton.className = "admin-icon-button";
-        themeButton.title = "Ganti tema";
+        themeButton.setAttribute("aria-label", "Ganti tema");
 
         const savedTheme = localStorage.getItem(THEME_KEY);
-        const dark = savedTheme === "dark";
 
-        document.body.classList.toggle("admin-dark-mode", dark);
-        themeButton.innerHTML = dark ? "☀" : "☾";
+        if (savedTheme === "dark") {
+            document.body.classList.add("admin-dark-mode");
+        }
+
+        themeButton.textContent =
+            document.body.classList.contains("admin-dark-mode")
+                ? "☀"
+                : "☾";
 
         themeButton.addEventListener("click", function() {
-            const isDark = document.body.classList.toggle("admin-dark-mode");
+            document.body.classList.toggle("admin-dark-mode");
+
+            const isDark = document.body.classList.contains(
+                "admin-dark-mode"
+            );
 
             localStorage.setItem(
                 THEME_KEY,
                 isDark ? "dark" : "light"
             );
 
-            themeButton.innerHTML = isDark ? "☀" : "☾";
-
-            showAdminToast(
-                isDark ? "Mode gelap diaktifkan." : "Mode terang diaktifkan."
-            );
+            themeButton.textContent = isDark ? "☀" : "☾";
         });
 
         actions.appendChild(themeButton);
+        topbar.appendChild(actions);
     }
 
+    // Overlay sidebar mobile
     if (!$("adminSidebarOverlay")) {
         const overlay = document.createElement("div");
 
@@ -1455,11 +1251,15 @@ function initModernAdminUI() {
     });
 
     document.addEventListener("keydown", function(event) {
-        if (event.key === "Escape") closeMobileSidebar();
+        if (event.key === "Escape") {
+            closeMobileSidebar();
+        }
     });
 
     window.addEventListener("resize", function() {
-        if (window.innerWidth > 900) closeMobileSidebar();
+        if (window.innerWidth > 900) {
+            closeMobileSidebar();
+        }
     });
 }
 
@@ -1468,13 +1268,14 @@ function closeMobileSidebar() {
 }
 
 // =====================================================
-// 24. ANIMASI ANGKA STATISTIK
+// 21. ANIMASI ANGKA STATISTIK
 // =====================================================
 
 function animateStatNumber(element) {
     if (!element || element.dataset.animated === "true") return;
 
     const target = Number(element.textContent);
+
     if (!Number.isFinite(target)) return;
 
     element.dataset.animated = "true";
@@ -1503,31 +1304,17 @@ function animateStatNumber(element) {
     requestAnimationFrame(update);
 }
 
-function initStatAnimations() {
-    const element = $("usedParticipants");
-    if (element) animateStatNumber(element);
-}
-
 // =====================================================
-// 25. INISIALISASI DASHBOARD
+// 22. INISIALISASI DASHBOARD
 // =====================================================
 
 renderDashboard();
 
-setText("qrCount", `0 / ${QR_TOTAL} QR Code`);
-setWidth("qrProgressBar", 0);
-
-updateQrProgress(
-    0,
-    "Klik tombol untuk membuat PDF QR Code peserta."
-);
-
 createInvitationPanel();
 initModernAdminUI();
-initStatAnimations();
 
 // =====================================================
-// 26. INFORMASI SISTEM
+// 23. INFORMASI SISTEM
 // =====================================================
 
 console.log("======================================");
@@ -1538,5 +1325,5 @@ console.log("PDF Invitation Generator: Aktif");
 console.log("Modern UI: Aktif");
 console.log("Dark Mode: Aktif");
 console.log("Sidebar Responsive: Aktif");
-console.log("Total Pemilih:", QR_TOTAL);
+console.log("QR Universal:", DEMO_UNIVERSAL_QR);
 console.log("======================================");
