@@ -1934,3 +1934,19 @@ button:disabled {
         height: 110px !important;
     }
 }
+
+
+/* Menyamakan latar belakang dengan foto kandidat */
+@media (min-width: 601px) {
+    .candidate-photo {
+        background: #98cfe1 !important;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .candidate-photo img {
+        object-fit: contain !important;
+        background: transparent !important;
+    }
+}
+
